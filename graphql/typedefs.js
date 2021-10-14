@@ -6,8 +6,6 @@ module.exports = graphql`
     body: String!
     createdAt: String!
     username: String!
-    likeCount: Int!
-    commentCount: Int!
     comments: [Comment]!
     likes: [Like]!
   }

@@ -4,16 +4,7 @@ import { Link } from "react-router-dom";
 import { Button, Icon, Label } from "semantic-ui-react";
 
 function CardInfo({
-  post: {
-    body,
-    createdAt,
-    id,
-    username,
-    comments,
-    likes,
-    likeCount,
-    commentCount
-  }
+  post: { body, createdAt, id, username, comments, likes }
 }) {
   function likePost() {
     console.log("liked post");

@@ -7,17 +7,17 @@ import Navigation from "./components/Navigation";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "semantic-ui-css/semantic.min.css";
-
+import { UserAuthProvider } from "./contextComponents/auth";
 function App() {
   return (
-    <>
+    <UserAuthProvider>
       <Router>
         <Navigation></Navigation>
         <Route exact path="/" component={Home}></Route>
         <Route exact path="/login" component={Login}></Route>
         <Route exact path="/register" component={Register}></Route>
       </Router>
-    </>
+    </UserAuthProvider>
   );
 }
 

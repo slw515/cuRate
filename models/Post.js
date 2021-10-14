@@ -3,8 +3,6 @@ const postSchema = new Schema({
   body: String,
   username: String,
   createdAt: String,
-  likeCount: Int,
-  commentCount: Int,
   comments: [
     {
       body: String,

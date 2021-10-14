@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   Navbar,
   Nav,
@@ -8,9 +8,29 @@ import {
   Button
 } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
-
+import { UserContext } from "../contextComponents/auth";
 function Navigation() {
-  return (
+  const { logout, user } = useContext(UserContext);
+  return user ? (
+    <Navbar bg="light" expand="lg">
+      <Nav
+        className="container-fluid"
+        style={{ maxHeight: "100px" }}
+        navbarScroll
+      >
+        <NavLink to="/ " className="nav-link" activeClassName="active">
+          Home
+        </NavLink>
+        <Nav.Item className="ms-auto">
+          <p>Welcome, {user.username}</p>
+        </Nav.Item>
+        <Button onClick={logout}>Logout</Button>
+        {/* <Nav.Item className="ms-auto">
+          <NavLink>Register</NavLink>
+        </Nav.Item> */}
+      </Nav>
+    </Navbar>
+  ) : (
     <Navbar bg="light" expand="lg">
       <Nav
         className="container-fluid"
