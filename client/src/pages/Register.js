@@ -3,7 +3,8 @@ import { Form, Button, Container } from "react-bootstrap";
 import gql from "graphql-tag";
 import { useMutation } from "@apollo/react-hooks";
 
-function Register() {
+function Register(props) {
+  const [errors, setErrors] = useState({});
   const [values, setValues] = useState({
     username: "",
     password: "",
@@ -16,6 +17,13 @@ function Register() {
   };
 
   const [addUser, { loading }] = useMutation(USER_REGISTER, {
+    update(_, result) {
+      props.history.push("/");
+    },
+    onError(err) {
+      console.log(err.graphQLErrors[0].extensions.errors);
+      setErrors(err.graphQLErrors[0].extensions.errors);
+    },
     variables: values
   });
 
@@ -26,7 +34,11 @@ function Register() {
 
   return (
     <Container>
-      <Form onSubmit={submitRegisterForm} noValidate>
+      <Form
+        onSubmit={submitRegisterForm}
+        noValidate
+        className={loading ? "loading" : ""}
+      >
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Email address</Form.Label>
           <Form.Control
@@ -76,6 +88,15 @@ function Register() {
           Submit
         </Button>
       </Form>
+      {Object.keys(errors).length > 0 && (
+        <div className="ui error message">
+          <ul className="list">
+            {Object.values(errors).map(value => (
+              <li key={value}>{value}</li>
+            ))}
+          </ul>
+        </div>
+      )}
     </Container>
   );
 }
