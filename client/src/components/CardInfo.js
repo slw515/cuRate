@@ -77,7 +77,13 @@ function CardInfo({
   return (
     <Card>
       {user && user.username === username ? (
-        <Button icon as={Link} to={`/posts/${id}`}>
+        <Button
+          className="editButtonOwnPost"
+          color="teal"
+          icon
+          as={Link}
+          to={`/posts/${id}`}
+        >
           <Icon name="edit" />
         </Button>
       ) : (

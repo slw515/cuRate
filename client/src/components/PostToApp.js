@@ -4,6 +4,7 @@ import gql from "graphql-tag";
 import { UserContext } from "../contextComponents/auth";
 import { useMutation } from "@apollo/react-hooks";
 import ReactPaginate from "react-paginate";
+import BottomBand from "./BottomBand";
 
 function PostToApp() {
   const { user } = useContext(UserContext);
@@ -34,9 +35,10 @@ function PostToApp() {
   const [department, setDepartment] = useState(0);
   const [query, setQuery] = useState(0);
 
-  const URL = `https://www.rijksmuseum.nl/api/en/collection?key=NgATnvIb&ps=16&imgonly=true&p=${currentPage}&technique=${queryParams.technique}&material=${queryParams.material}&culture=${queryParams.place}`;
+  const URL = `https://www.rijksmuseum.nl/api/en/collection?key=NgATnvIb&ps=9&imgonly=true&p=${currentPage}&technique=${queryParams.technique}&material=${queryParams.material}&culture=${queryParams.place}`;
 
   const handleFetch = () => {
+    console.log(URL);
     fetch(URL)
       .then(response => response.json())
 
@@ -46,17 +48,51 @@ function PostToApp() {
 
         setPageCount(Math.ceil(body.count / 20));
         setisLoaded(true);
-        console.log(URL);
+
+        var checkboxes = document.getElementsByClassName("form-check-input");
+        for (var i = 0; i < checkboxes.length; i++) {
+          var isTrue = false;
+          for (var x = 0; x < currentSelectedArt.length; x++) {
+            console.log(
+              "comparing: " +
+                checkboxes[i].value +
+                "with: " +
+                currentSelectedArt[x].id
+            );
+            if (currentSelectedArt[x].id == checkboxes[i].value) {
+              console.log("its true" + " " + currentSelectedArt[x].id);
+              isTrue = true;
+              break;
+            }
+          }
+          if (isTrue) {
+            checkboxes[i].checked = true;
+          } else {
+            checkboxes[i].checked = false;
+          }
+        }
       })
 
       .catch(error => console.error("Error", error));
   };
 
-  const handlePageChange = selectedObject => {
-    setcurrentPage(selectedObject.selected);
-    console.log(selectedObject);
+  useEffect(() => {
     handleFetch();
+  }, [currentPage]);
+
+  const handlePageChange = selectedObject => {
+    console.log(selectedObject.selected);
+    setcurrentPage(selectedObject.selected);
   };
+
+  // setcurrentPage(selectedObject.selected);
+  // var checkboxes = document.getElementsByClassName("form-check-input");
+  // console.log(checkboxes);
+
+  // handleFetch();
+  // for (var i = 0; i < checkboxes.length; i++) {
+  //   checkboxes[i].checked = false;
+  // }
 
   const inputChange = event => {
     setPostContent({ ...postContent, [event.target.name]: event.target.value });
@@ -98,7 +134,14 @@ function PostToApp() {
 
   const modifySelectedArt = event => {
     if (event.currentTarget.checked) {
-      addRemoveSelectedArt([...currentSelectedArt, { id: event.target.value }]);
+      const imageName = hits.find(
+        artwork => artwork.title == event.target.value
+      ).webImage.url;
+      console.log(imageName);
+      addRemoveSelectedArt([
+        ...currentSelectedArt,
+        { id: event.target.value, image: imageName }
+      ]);
     } else {
       addRemoveSelectedArt(
         currentSelectedArt.filter(post => post.id != event.target.value)
@@ -106,8 +149,21 @@ function PostToApp() {
     }
   };
 
+  const deleteSelectedArtworkCard = artworkId => {
+    console.log(artworkId);
+    for (var i = 0; i < hits.length; i++) {
+      if (hits[i].title == artworkId) {
+        document.getElementById(hits[i].id).checked = false;
+        break;
+      }
+    }
+    addRemoveSelectedArt(
+      currentSelectedArt.filter(post => post.id != artworkId)
+    );
+  };
+
   return (
-    <div>
+    <>
       {/* <label>Search</label>
 
       <input type="text" onChange={event => setQuery(event.target.value)} /> */}
@@ -166,13 +222,13 @@ function PostToApp() {
       </Form>
 
       {/* <button onClick={handleFetch}>Get Data</button> */}
-      <Container>
+      <Container className="createGalleryContainer">
         <Row>
           {isLoaded ? (
             hits.map(item => {
               return (
                 <div className="col-md-4">
-                  <Card>
+                  <Card className="artworkCard">
                     <>
                       <Form.Check
                         id={item.id}
@@ -187,7 +243,9 @@ function PostToApp() {
                         Some quick example text to build on the card title and
                         make up the bulk of the card's content.
                       </Card.Text>
-                      <Button variant="primary">Go somewhere</Button>
+                      <a href={item.links.web} target="_blank">
+                        <Button variant="primary">Learn More</Button>
+                      </a>
                     </Card.Body>
                   </Card>
                 </div>
@@ -200,22 +258,29 @@ function PostToApp() {
       </Container>
 
       {isLoaded ? (
-        <ReactPaginate
-          pageCount={pageCount}
-          pageRange={2}
-          marginPagesDisplayed={2}
-          onPageChange={handlePageChange}
-          previousLinkClassName={"page"}
-          breakClassName={"break-me"}
-          nextLinkClassName={"page"}
-          pageClassName={"page"}
-          disabledClassNae={"disabled"}
-          activeClassName={"active"}
-        />
+        <div className="paginationBottomWrapper">
+          <ReactPaginate
+            pageCount={pageCount}
+            pageRange={2}
+            marginPagesDisplayed={2}
+            onPageChange={handlePageChange}
+            previousLinkClassName={"page"}
+            containerClassName={"paginationCreateGallery"}
+            breakClassName={"break-me"}
+            nextLinkClassName={"page"}
+            pageClassName={"page"}
+            disabledClassNae={"disabled"}
+            activeClassName={"active"}
+          />
+        </div>
       ) : (
         <div>Nothing to display</div>
       )}
-    </div>
+      <BottomBand
+        artworks={currentSelectedArt}
+        deleteSelectedArtworkCard={deleteSelectedArtworkCard}
+      ></BottomBand>
+    </>
     //  <Form noValidate onSubmit={createPostFunc}>
     //   <h1>Create A Gallery</h1>
     //   <button onClick={handleFetch}>Get Data</button>

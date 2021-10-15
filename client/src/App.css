@@ -1,7 +1,92 @@
 #bottomBand {
   position: fixed;
   bottom: 0;
-  width: 100%;
+  width: 100vw;
   height: 200px;
-  background-color: pink;
+  left: 0;
+  background-color: #eee;
+  display: flex;
+  justify-content: center;
+}
+
+#bottomBand .thumbnailAndTitle {
+  background: #6c757d;
+  text-align: center;
+  margin: 1rem 0.3rem;
+  border-radius: 6px;
+  color: white;
+  font-family: sans-serif;
+  font-weight: 100;
+  position: relative;
+}
+
+#bottomBand .thumbnailAndTitle:hover {
+  background: hsl(206, 8%, 36%);
+}
+
+#bottomBand .thumbnailAndTitle img {
+  width: 70px;
+  height: auto;
+}
+
+#bottomBand .thumbnailAndTitle p {
+  font-size: 1rem;
+  max-width: 100px;
+  max-height: 50px;
+  overflow: hidden;
+  padding: 10px;
+}
+
+#bottomBand .thumbnailAndTitle button {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  top: -8px;
+  right: -8px;
+}
+
+#bottomBand .thumbnailAndTitle button .delete {
+  margin: -8px !important;
+}
+
+.artworkCard .form-check-input {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 40px;
+  height: 40px;
+}
+
+.createGalleryContainer .col-md-4 {
+  margin-bottom: 2rem;
+}
+
+.createGalleryContainer {
+}
+.paginationBottomWrapper {
+  margin-bottom: 240px;
+  list-style: none;
+}
+
+.paginationBottomWrapper ul {
+  list-style: none;
+}
+
+.paginationBottomWrapper .paginationCreateGallery li {
+  color: black;
+  float: left;
+  padding: 8px 16px;
+  text-decoration: none;
+}
+.paginationBottomWrapper .paginationCreateGallery li.active {
+  background-color: #4caf50;
+  color: white;
+}
+
+.col-md-4 .card .editButtonOwnPost {
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  top: 9px;
+  left: 9px;
 }

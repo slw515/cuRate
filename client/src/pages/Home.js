@@ -19,39 +19,47 @@ function Home() {
       <Tabs
         defaultActiveKey="profile"
         id="uncontrolled-tab-example"
-        className="mb-3"
+        className="mb-3 nav-fill"
       >
         <Tab eventKey="home" title="Create Gallery">
           {user && <PostToApp></PostToApp>}
         </Tab>
         <Tab eventKey="galleries" title="Galleries">
-          {loading ? (
-            <h1>Loading Posts...</h1>
-          ) : (
-            data.getPosts &&
-            data.getPosts.map(post => (
-              <div className="col-md-4" key={post.id}>
-                <CardInfo post={post}></CardInfo>
-              </div>
-            ))
-          )}
+          <Container>
+            <Row>
+              {loading ? (
+                <h1>Loading Posts...</h1>
+              ) : (
+                data.getPosts &&
+                data.getPosts.map(post => (
+                  <div className="col-md-4" key={post.id}>
+                    <CardInfo post={post}></CardInfo>
+                  </div>
+                ))
+              )}
+            </Row>
+          </Container>
         </Tab>
         <Tab eventKey="myGalleries" title="My Galleries">
-          {loading ? (
-            <h1>Loading Posts...</h1>
-          ) : (
-            data.getPosts &&
-            data.getPosts.map(function(post, i) {
-              console.log(post.username);
-              return post.username == user.username ? (
-                <div className="col-md-4" key={post.id}>
-                  <CardInfo post={post}></CardInfo>
-                </div>
+          <Container>
+            <Row>
+              {loading ? (
+                <h1>Loading Posts...</h1>
               ) : (
-                <></>
-              );
-            })
-          )}
+                data.getPosts &&
+                data.getPosts.map(function(post, i) {
+                  console.log(post.username);
+                  return post.username == user.username ? (
+                    <div className="col-md-4" key={post.id}>
+                      <CardInfo post={post}></CardInfo>
+                    </div>
+                  ) : (
+                    <></>
+                  );
+                })
+              )}{" "}
+            </Row>
+          </Container>
         </Tab>
       </Tabs>
     </Container>

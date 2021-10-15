@@ -19,7 +19,7 @@ function Navigation() {
         navbarScroll
       >
         <NavLink to="/ " className="nav-link" activeClassName="active">
-          Home
+          CuRate
         </NavLink>
         <Nav.Item className="ms-auto">
           <p>Welcome, {user.username}</p>
