@@ -1,21 +1,32 @@
 import React from "react";
 import App from "./App";
+import { setContext } from "apollo-link-context";
 import {
   ApolloClient,
   InMemoryCache,
   createHttpLink,
   ApolloProvider
 } from "@apollo/client";
-// import { InMemoryCache } from "apollo-cache-inmemory";
-// import { createHttpLink } from "apollo-link-http";
-// import { ApolloProvider } from "@apollo/react-hooks";
+//assign authorization headers: https://www.npmjs.com/package/apollo-link-context
+const setAuthorizationLink = setContext(() => {
+  const token = localStorage.getItem("loggedInToken");
+  return {
+    headers: {
+      Authorization: token ? `Bearer ${token}` : ""
+    }
+  };
+});
 
 const httpLink = createHttpLink({
   uri: "http://localhost:5000"
 });
 
+function generateTokenAndLink(token, link) {
+  return token.concat(link);
+}
+
 const client = new ApolloClient({
-  link: httpLink,
+  link: generateTokenAndLink(setAuthorizationLink, httpLink),
   cache: new InMemoryCache()
 });
 

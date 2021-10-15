@@ -1,13 +1,19 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import { Container, Card, Row } from "react-bootstrap";
 import CardInfo from "../components/CardInfo";
+import PostToApp from "../components/PostToApp";
+
+import { UserContext } from "../contextComponents/auth";
+
 function Home() {
+  const { user } = useContext(UserContext);
   const { loading, data } = useQuery(RETRIEVE_POSTS_QUERY);
   console.log(data);
   return (
     <Container>
+      {user && <PostToApp></PostToApp>}
       <Row>
         <h1>Home</h1>
         {loading ? (
