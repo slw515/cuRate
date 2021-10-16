@@ -4,6 +4,8 @@ module.exports = graphql`
   type Post {
     id: ID!
     body: String!
+    title: String!
+    gallery: [ArtWorkOfGallery]!
     createdAt: String!
     username: String!
     comments: [Comment]!
@@ -40,10 +42,24 @@ module.exports = graphql`
   type Mutation {
     register(registerInput: RegisterInput): User!
     login(username: String!, password: String!): User!
-    createPost(body: String!): Post!
+    createPost(body: String!, title: String!, gallery: [ArtWork!]!): Post!
     deletePost(postId: ID!): String!
     createComment(postId: ID!, body: String!): Post!
     deleteComment(postId: ID!, commentId: ID!): Post!
     likePost(postId: ID!): Post!
+  }
+  input ArtWork {
+    artist: String!
+    id: String!
+    image: String!
+    title: String!
+    userDescription: String!
+  }
+  type ArtWorkOfGallery {
+    artist: String!
+    id: String!
+    image: String!
+    title: String!
+    userDescription: String!
   }
 `;

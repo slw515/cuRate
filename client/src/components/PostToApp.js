@@ -110,22 +110,25 @@ function PostToApp() {
     setQueryParams({ ...queryParams, [event.target.name]: event.target.value });
   };
   const [createPost, { error }] = useMutation(CREATE_POST_MUTATION, {
-    variables: postContent,
-    update(proxy, result) {
-      console.log(postContent);
-      const data = proxy.readQuery({
-        query: RETRIEVE_POSTS_QUERY
-      });
-      console.log(result.data);
-      proxy.writeQuery({
-        query: RETRIEVE_POSTS_QUERY,
-        data: {
-          getPosts: [result.data.createPost, ...data.getPosts]
-        }
-      });
-
-      postContent.body = "";
+    variables: {
+      body: galleryBody,
+      title: galleryTitle,
+      gallery: currentSelectedArt
     },
+    // update(proxy, result) {
+    //   const data = proxy.readQuery({
+    //     query: RETRIEVE_POSTS_QUERY
+    //   });
+    //   console.log(result.data);
+    //   proxy.writeQuery({
+    //     query: RETRIEVE_POSTS_QUERY,
+    //     data: {
+    //       getPosts: [result.data.createPost, ...data.getPosts]
+    //     }
+    //   });
+
+    //   postContent.body = "";
+    // },
     onError(err) {
       return err;
     }
@@ -133,7 +136,7 @@ function PostToApp() {
 
   const createPostFunc = event => {
     event.preventDefault();
-    // createPost();
+    createPost();
     console.log("hellooo");
   };
 
@@ -316,8 +319,8 @@ function PostToApp() {
 }
 
 const CREATE_POST_MUTATION = gql`
-  mutation createPost($body: String!) {
-    createPost(body: $body) {
+  mutation createPost($body: String!, $title: String!, $gallery: [ArtWork!]!) {
+    createPost(body: $body, title: $title, gallery: $gallery) {
       body
       id
       username
@@ -331,6 +334,11 @@ const CREATE_POST_MUTATION = gql`
         id
         username
         createdAt
+      }
+      gallery {
+        id
+        title
+        userDescription
       }
     }
   }
