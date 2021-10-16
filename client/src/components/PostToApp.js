@@ -88,8 +88,6 @@ function PostToApp() {
     var objIndex = currentSelectedArt.findIndex(
       artwork => artwork.title == title
     );
-    console.log(objIndex);
-    console.log(e.target.value);
     var newEntry = currentSelectedArt[objIndex];
     newEntry.userDescription = e.target.value;
     addRemoveSelectedArt([
@@ -115,20 +113,20 @@ function PostToApp() {
       title: galleryTitle,
       gallery: currentSelectedArt
     },
-    // update(proxy, result) {
-    //   const data = proxy.readQuery({
-    //     query: RETRIEVE_POSTS_QUERY
-    //   });
-    //   console.log(result.data);
-    //   proxy.writeQuery({
-    //     query: RETRIEVE_POSTS_QUERY,
-    //     data: {
-    //       getPosts: [result.data.createPost, ...data.getPosts]
-    //     }
-    //   });
+    update(proxy, result) {
+      const data = proxy.readQuery({
+        query: RETRIEVE_POSTS_QUERY
+      });
+      console.log(result.data);
+      proxy.writeQuery({
+        query: RETRIEVE_POSTS_QUERY,
+        data: {
+          getPosts: [result.data.createPost, ...data.getPosts]
+        }
+      });
 
-    //   postContent.body = "";
-    // },
+      //   postContent.body = "";
+    },
     onError(err) {
       return err;
     }
@@ -348,6 +346,7 @@ const RETRIEVE_POSTS_QUERY = gql`
   {
     getPosts {
       id
+      title
       body
       username
       createdAt
@@ -359,6 +358,13 @@ const RETRIEVE_POSTS_QUERY = gql`
       likes {
         username
         createdAt
+      }
+      gallery {
+        artist
+        id
+        image
+        title
+        userDescription
       }
     }
   }

@@ -22,14 +22,14 @@ module.exports = {
           throw new Error("Post does not exist!");
         }
       } catch (err) {
-        throw new Error(err);
+        throw new Error("wjat tje fuck");
       }
     }
   },
   Mutation: {
     async createPost(_, { body, title, gallery }, context) {
       const user = checkAuth(context);
-
+      console.log(gallery);
       if (body.trim() === "") {
         throw new Error("Post body must not be empty");
       }
@@ -53,6 +53,7 @@ module.exports = {
 
       try {
         const post = await Post.findById(postId);
+
         if (user.username == post.username) {
           var postCopy = post;
           await post.delete();

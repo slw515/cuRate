@@ -34,7 +34,8 @@ function Login(props) {
   };
 
   return (
-    <Container>
+    <Container className="loginRegisterContainer">
+      <h1>Login</h1>
       <Form
         onSubmit={loginUserForm}
         noValidate

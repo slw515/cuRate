@@ -7,7 +7,7 @@ import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 
 function CardInfo({
-  post: { body, createdAt, id, username, comments, likes }
+  post: { title, body, createdAt, id, username, comments, likes, gallery }
 }) {
   const postId = id;
   const { user } = useContext(UserContext);
@@ -89,11 +89,11 @@ function CardInfo({
       ) : (
         <></>
       )}
-      <Card.Img variant="top" src="holder.js/100px160" />
+      <Card.Img variant="top" src={gallery[0].image} />
       <Card.Body>
         <a as={Link} to={`/posts/${id}`}>
           <Card.Title as={Link} to={`/posts/${id}`}>
-            {username}
+            {title}
           </Card.Title>
         </a>
         <a as={Link} to={`/posts/${id}`}>
@@ -112,7 +112,7 @@ function CardInfo({
           labelPosition="right"
           onClick={comment}
           as={Link}
-          to={`/posts/${id}`}
+          to={`${user ? `/posts/${id}` : `/login`}`}
         >
           <Button color="blue" basic onClick={deletePostFunc}>
             <Icon name="comment" />

@@ -8,7 +8,7 @@ const postSchema = new Schema({
     {
       id: String,
       title: String,
-      imgSrc: String,
+      image: String,
       userDescription: String,
       artist: String
     }

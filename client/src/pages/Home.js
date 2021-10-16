@@ -14,12 +14,22 @@ function Home() {
   return (
     <Container>
       <Tabs
-        defaultActiveKey="home"
+        defaultActiveKey="galleries"
         id="tabs-for-main-app"
         className="tabs-for-main-app mb-3 nav-fill"
       >
         <Tab eventKey="home" title="Create Gallery">
-          {user && <PostToApp></PostToApp>}
+          {user ? (
+            <PostToApp></PostToApp>
+          ) : (
+            <Container>
+              <Row>
+                <h1 style={{ marginTop: "12rem", textAlign: "center" }}>
+                  Please Login or Register!
+                </h1>
+              </Row>
+            </Container>
+          )}
         </Tab>
         <Tab eventKey="galleries" title="Galleries">
           <Container>
@@ -42,8 +52,7 @@ function Home() {
             <Row>
               {loading ? (
                 <h1>Loading Posts...</h1>
-              ) : (
-                data.getPosts &&
+              ) : data.getPosts && user != null ? (
                 data.getPosts.map(function(post, i) {
                   console.log(post.username);
                   return post.username == user.username ? (
@@ -54,6 +63,10 @@ function Home() {
                     <></>
                   );
                 })
+              ) : (
+                <h1 style={{ marginTop: "12rem", textAlign: "center" }}>
+                  Please Login or Register!
+                </h1>
               )}{" "}
             </Row>
           </Container>
@@ -68,6 +81,7 @@ const RETRIEVE_POSTS_QUERY = gql`
     getPosts {
       id
       body
+      title
       username
       createdAt
       comments {
@@ -78,6 +92,13 @@ const RETRIEVE_POSTS_QUERY = gql`
       likes {
         username
         createdAt
+      }
+      gallery {
+        artist
+        id
+        image
+        title
+        userDescription
       }
     }
   }
