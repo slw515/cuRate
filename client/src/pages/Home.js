@@ -13,13 +13,10 @@ function Home() {
 
   return (
     <Container>
-      <Row>
-        <h1>Home</h1>
-      </Row>
       <Tabs
-        defaultActiveKey="profile"
-        id="uncontrolled-tab-example"
-        className="mb-3 nav-fill"
+        defaultActiveKey="home"
+        id="tabs-for-main-app"
+        className="tabs-for-main-app mb-3 nav-fill"
       >
         <Tab eventKey="home" title="Create Gallery">
           {user && <PostToApp></PostToApp>}

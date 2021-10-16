@@ -5,6 +5,7 @@ import { UserContext } from "../contextComponents/auth";
 import { useMutation } from "@apollo/react-hooks";
 import ReactPaginate from "react-paginate";
 import BottomBand from "./BottomBand";
+import EditSelectedArtworks from "./EditSelectedArtworks";
 
 function PostToApp() {
   const { user } = useContext(UserContext);
@@ -16,6 +17,7 @@ function PostToApp() {
   });
 
   const [currentSelectedArt, addRemoveSelectedArt] = useState([]);
+  const [onSearchPage, changeSearchingWorksOrEditing] = useState(true);
 
   const [queryParams, setQueryParams] = useState({
     technique: "",
@@ -44,8 +46,6 @@ function PostToApp() {
 
       .then(body => {
         setHits([...body.artObjects]);
-        console.log(hits);
-
         setPageCount(Math.ceil(body.count / 20));
         setisLoaded(true);
 
@@ -53,14 +53,7 @@ function PostToApp() {
         for (var i = 0; i < checkboxes.length; i++) {
           var isTrue = false;
           for (var x = 0; x < currentSelectedArt.length; x++) {
-            console.log(
-              "comparing: " +
-                checkboxes[i].value +
-                "with: " +
-                currentSelectedArt[x].id
-            );
-            if (currentSelectedArt[x].id == checkboxes[i].value) {
-              console.log("its true" + " " + currentSelectedArt[x].id);
+            if (currentSelectedArt[x].title == checkboxes[i].value) {
               isTrue = true;
               break;
             }
@@ -75,24 +68,28 @@ function PostToApp() {
 
       .catch(error => console.error("Error", error));
   };
-
   useEffect(() => {
     handleFetch();
   }, [currentPage]);
 
-  const handlePageChange = selectedObject => {
-    console.log(selectedObject.selected);
-    setcurrentPage(selectedObject.selected);
+  const changeUserDescription = (title, e) => {
+    var objIndex = currentSelectedArt.findIndex(
+      artwork => artwork.title == title
+    );
+    console.log(objIndex);
+    console.log(e.target.value);
+    var newEntry = currentSelectedArt[objIndex];
+    newEntry.userDescription = e.target.value;
+    addRemoveSelectedArt([
+      ...currentSelectedArt.slice(0, objIndex),
+      newEntry,
+      ...currentSelectedArt.slice(objIndex + 1)
+    ]);
   };
 
-  // setcurrentPage(selectedObject.selected);
-  // var checkboxes = document.getElementsByClassName("form-check-input");
-  // console.log(checkboxes);
-
-  // handleFetch();
-  // for (var i = 0; i < checkboxes.length; i++) {
-  //   checkboxes[i].checked = false;
-  // }
+  const handlePageChange = selectedObject => {
+    setcurrentPage(selectedObject.selected);
+  };
 
   const inputChange = event => {
     setPostContent({ ...postContent, [event.target.name]: event.target.value });
@@ -134,179 +131,163 @@ function PostToApp() {
 
   const modifySelectedArt = event => {
     if (event.currentTarget.checked) {
-      const imageName = hits.find(
+      const artworkObject = hits.find(
         artwork => artwork.title == event.target.value
-      ).webImage.url;
-      console.log(imageName);
+      );
+      console.log(event.target.value);
       addRemoveSelectedArt([
         ...currentSelectedArt,
-        { id: event.target.value, image: imageName }
+        {
+          title: event.target.value,
+          image: artworkObject.webImage.url,
+          id: artworkObject.id,
+          userDescription: "",
+          artist: artworkObject.principalOrFirstMaker
+        }
       ]);
     } else {
       addRemoveSelectedArt(
-        currentSelectedArt.filter(post => post.id != event.target.value)
+        currentSelectedArt.filter(post => post.title != event.target.value)
       );
     }
   };
 
   const deleteSelectedArtworkCard = artworkId => {
-    console.log(artworkId);
-    for (var i = 0; i < hits.length; i++) {
-      if (hits[i].title == artworkId) {
-        document.getElementById(hits[i].id).checked = false;
-        break;
+    if (onSearchPage) {
+      for (var i = 0; i < hits.length; i++) {
+        if (hits[i].title == artworkId) {
+          document.getElementById(hits[i].id).checked = false;
+          break;
+        }
       }
     }
+
     addRemoveSelectedArt(
-      currentSelectedArt.filter(post => post.id != artworkId)
+      currentSelectedArt.filter(post => post.title != artworkId)
     );
+    if (onSearchPage == false && hits.length == 0) {
+      changeSearchingWorksOrEditing(true);
+    }
+  };
+
+  const changeStateToEditing = () => {
+    changeSearchingWorksOrEditing(!onSearchPage);
+    handleFetch();
   };
 
   return (
     <>
-      {/* <label>Search</label>
-
-      <input type="text" onChange={event => setQuery(event.target.value)} /> */}
-
-      {/* <Form.Select
-        size="lg"
-        onChange={event => setDepartment(event.target.value)}
-      >
-        {departments.map(department => (
-          <option value={department.departmentId}>
-            {department.displayName}
-          </option>
-        ))}
-      </Form.Select> */}
-
-      <Form style={{ marginBottom: "20px" }} onSubmit={queryRijksMuseum}>
-        <Row style={{ marginBottom: "6px" }}>
-          <Col>
-            <Form.Control
-              placeholder="Technique"
-              name="technique"
-              value={queryParams.technique}
-              onChange={changeQueryParams}
-            />
-          </Col>
-          <Col>
-            <Form.Control
-              placeholder="Material"
-              name="material"
-              value={queryParams.material}
-              onChange={changeQueryParams}
-            />
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <Form.Control
-              placeholder="Place"
-              name="place"
-              value={queryParams.place}
-              onChange={changeQueryParams}
-            />
-          </Col>
-          <Col>
-            <Form.Control
-              placeholder="Catalogue Title"
-              name="catalogueTitle"
-              value={queryParams.catalogueTitle}
-              onChange={changeQueryParams}
-            />
-          </Col>
-        </Row>
-        <Button variant="primary" type="submit">
-          Login
-        </Button>
-      </Form>
-
-      {/* <button onClick={handleFetch}>Get Data</button> */}
-      <Container className="createGalleryContainer">
-        <Row>
+      {onSearchPage ? (
+        <>
+          <Form style={{ marginBottom: "20px" }} onSubmit={queryRijksMuseum}>
+            <Row style={{ marginBottom: "6px" }}>
+              <Col>
+                <Form.Control
+                  placeholder="Technique"
+                  name="technique"
+                  value={queryParams.technique}
+                  onChange={changeQueryParams}
+                />
+              </Col>
+              <Col>
+                <Form.Control
+                  placeholder="Material"
+                  name="material"
+                  value={queryParams.material}
+                  onChange={changeQueryParams}
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <Form.Control
+                  placeholder="Place"
+                  name="place"
+                  value={queryParams.place}
+                  onChange={changeQueryParams}
+                />
+              </Col>
+              <Col>
+                <Form.Control
+                  placeholder="Catalogue Title"
+                  name="catalogueTitle"
+                  value={queryParams.catalogueTitle}
+                  onChange={changeQueryParams}
+                />
+              </Col>
+            </Row>
+            <Button variant="primary" type="submit">
+              Search Collection
+            </Button>
+          </Form>
+          <Container className="createGalleryContainer">
+            <Row>
+              {isLoaded ? (
+                hits.map(item => {
+                  return (
+                    <div className="col-md-4">
+                      <Card className="artworkCard">
+                        <>
+                          <Form.Check
+                            id={item.id}
+                            value={item.title}
+                            onChange={modifySelectedArt}
+                          />
+                        </>
+                        <Card.Img variant="top" src={item.webImage.url} />
+                        <Card.Body>
+                          <Card.Title>{item.title}</Card.Title>
+                          <Card.Text>
+                            Some quick example text to build on the card title
+                            and make up the bulk of the card's content.
+                          </Card.Text>
+                          <a href={item.links.web} target="_blank">
+                            <Button variant="primary">Learn More</Button>
+                          </a>
+                        </Card.Body>
+                      </Card>
+                    </div>
+                  );
+                })
+              ) : (
+                <div></div>
+              )}
+            </Row>
+          </Container>
           {isLoaded ? (
-            hits.map(item => {
-              return (
-                <div className="col-md-4">
-                  <Card className="artworkCard">
-                    <>
-                      <Form.Check
-                        id={item.id}
-                        value={item.title}
-                        onChange={modifySelectedArt}
-                      />
-                    </>
-                    <Card.Img variant="top" src={item.webImage.url} />
-                    <Card.Body>
-                      <Card.Title>{item.title}</Card.Title>
-                      <Card.Text>
-                        Some quick example text to build on the card title and
-                        make up the bulk of the card's content.
-                      </Card.Text>
-                      <a href={item.links.web} target="_blank">
-                        <Button variant="primary">Learn More</Button>
-                      </a>
-                    </Card.Body>
-                  </Card>
-                </div>
-              );
-            })
+            <div className="paginationBottomWrapper">
+              <ReactPaginate
+                pageCount={pageCount}
+                pageRange={2}
+                marginPagesDisplayed={2}
+                onPageChange={handlePageChange}
+                previousLinkClassName={"page"}
+                containerClassName={"paginationCreateGallery"}
+                breakClassName={"break-me"}
+                nextLinkClassName={"page"}
+                pageClassName={"page"}
+                disabledClassNae={"disabled"}
+                activeClassName={"active"}
+              />
+            </div>
           ) : (
-            <div></div>
+            <div>Nothing to display</div>
           )}
-        </Row>
-      </Container>
-
-      {isLoaded ? (
-        <div className="paginationBottomWrapper">
-          <ReactPaginate
-            pageCount={pageCount}
-            pageRange={2}
-            marginPagesDisplayed={2}
-            onPageChange={handlePageChange}
-            previousLinkClassName={"page"}
-            containerClassName={"paginationCreateGallery"}
-            breakClassName={"break-me"}
-            nextLinkClassName={"page"}
-            pageClassName={"page"}
-            disabledClassNae={"disabled"}
-            activeClassName={"active"}
-          />
-        </div>
+        </>
       ) : (
-        <div>Nothing to display</div>
+        <EditSelectedArtworks
+          artworks={currentSelectedArt}
+          deleteSelectedArtworkCard={deleteSelectedArtworkCard}
+          changeUserDescription={changeUserDescription}
+        ></EditSelectedArtworks>
       )}
       <BottomBand
         artworks={currentSelectedArt}
         deleteSelectedArtworkCard={deleteSelectedArtworkCard}
-      ></BottomBand>
+        changeStateToEditing={changeStateToEditing}
+        onSearchPage={onSearchPage}
+      ></BottomBand>{" "}
     </>
-    //  <Form noValidate onSubmit={createPostFunc}>
-    //   <h1>Create A Gallery</h1>
-    //   <button onClick={handleFetch}>Get Data</button>
-    //    <h5>{postContent.username}</h5>
-
-    //   <Form.Group className="mb-3" controlId="formBasicPassword">
-    //     <Form.Label>Post:</Form.Label>
-    //     <Form.Control
-    //       type="input"
-    //       placeholder="Your Post Here!"
-    //       name="body"
-    //       value={postContent.body}
-    //       onChange={inputChange}
-    //     />
-    //   </Form.Group>
-    //   <Button variant="primary" type="submit">
-    //     Post
-    //   </Button>
-    // </Form>
-    //  {error && (
-    //   <div className="ui error message">
-    //     <ul className="list">
-    //       <li>{error.graphQLErrors[0].message}</li>
-    //     </ul>
-    //   </div>
-    // )}
   );
 }
 
@@ -351,3 +332,30 @@ const RETRIEVE_POSTS_QUERY = gql`
   }
 `;
 export default PostToApp;
+
+//  <Form noValidate onSubmit={createPostFunc}>
+//   <h1>Create A Gallery</h1>
+//   <button onClick={handleFetch}>Get Data</button>
+//    <h5>{postContent.username}</h5>
+
+//   <Form.Group className="mb-3" controlId="formBasicPassword">
+//     <Form.Label>Post:</Form.Label>
+//     <Form.Control
+//       type="input"
+//       placeholder="Your Post Here!"
+//       name="body"
+//       value={postContent.body}
+//       onChange={inputChange}
+//     />
+//   </Form.Group>
+//   <Button variant="primary" type="submit">
+//     Post
+//   </Button>
+// </Form>
+//  {error && (
+//   <div className="ui error message">
+//     <ul className="list">
+//       <li>{error.graphQLErrors[0].message}</li>
+//     </ul>
+//   </div>
+// )}

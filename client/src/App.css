@@ -1,12 +1,37 @@
+.tabs-for-main-app {
+  margin-top: 24px;
+}
+
 #bottomBand {
   position: fixed;
   bottom: 0;
-  width: 100vw;
+  width: 100%;
   height: 200px;
   left: 0;
   background-color: #eee;
   display: flex;
   justify-content: center;
+}
+
+#bottomBand .editAndCreatePost {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+#bottomBand .editAndCreatePost p {
+  /* margin-bottom: 14px; */
+  /* text-align: center; */
+  margin: auto;
+}
+
+#bottomBand .editAndCreatePost .button {
+  height: 40px;
+  width: 100%;
+  margin: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 #bottomBand .thumbnailAndTitle {
@@ -15,9 +40,9 @@
   margin: 1rem 0.3rem;
   border-radius: 6px;
   color: white;
-  font-family: sans-serif;
-  font-weight: 100;
+  font-family: Lato, "Helvetica Neue", Arial, Helvetica, sans-serif;
   position: relative;
+  height: calc(100% - 67px);
 }
 
 #bottomBand .thumbnailAndTitle:hover {
@@ -25,8 +50,10 @@
 }
 
 #bottomBand .thumbnailAndTitle img {
-  width: 70px;
+  width: 60px;
   height: auto;
+  overflow: hidden;
+  max-height: 75px;
 }
 
 #bottomBand .thumbnailAndTitle p {
@@ -34,7 +61,9 @@
   max-width: 100px;
   max-height: 50px;
   overflow: hidden;
-  padding: 10px;
+  padding: 6px;
+  margin-bottom: 2px;
+  font-weight: normal;
 }
 
 #bottomBand .thumbnailAndTitle button {
@@ -89,4 +118,37 @@
   position: absolute;
   top: 9px;
   left: 9px;
+}
+
+.editGalleryContainer {
+  margin-top: 60px;
+  margin-bottom: 240px;
+}
+
+.editGalleryContainer .col-md-4 img {
+  width: 100%;
+  height: auto;
+}
+
+.editGalleryContainer .col-md-4 p {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.editGalleryContainer .col-md-4 .editPageCard {
+  padding: 16px;
+  border: rgba(128, 128, 128, 0.171) 1.5px solid;
+  border-radius: 8px;
+  position: relative;
+}
+
+.editGalleryContainer .col-md-4 .editPageCard .button {
+  position: absolute;
+  top: -12px;
+  left: -12px;
+}
+.editGalleryContainer .col-md-4 form .mb-3 {
+  text-align: center;
+  font-weight: 100;
 }
