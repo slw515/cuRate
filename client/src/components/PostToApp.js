@@ -5,6 +5,8 @@ import { UserContext } from "../contextComponents/auth";
 import { useMutation } from "@apollo/react-hooks";
 import ReactPaginate from "react-paginate";
 import BottomBand from "./BottomBand";
+import BottomBandSubmitGallery from "./BottomBandSubmitGallery";
+
 import EditSelectedArtworks from "./EditSelectedArtworks";
 
 function PostToApp() {
@@ -18,6 +20,8 @@ function PostToApp() {
 
   const [currentSelectedArt, addRemoveSelectedArt] = useState([]);
   const [onSearchPage, changeSearchingWorksOrEditing] = useState(true);
+  const [galleryTitle, changeGalleryTitle] = useState("");
+  const [galleryBody, changeGalleryBody] = useState("");
 
   const [queryParams, setQueryParams] = useState({
     technique: "",
@@ -72,6 +76,14 @@ function PostToApp() {
     handleFetch();
   }, [currentPage]);
 
+  const changeGalleryTitleFunc = e => {
+    changeGalleryTitle(e.target.value);
+  };
+
+  const changeGalleryBodyFunc = e => {
+    changeGalleryBody(e.target.value);
+  };
+
   const changeUserDescription = (title, e) => {
     var objIndex = currentSelectedArt.findIndex(
       artwork => artwork.title == title
@@ -121,7 +133,8 @@ function PostToApp() {
 
   const createPostFunc = event => {
     event.preventDefault();
-    createPost();
+    // createPost();
+    console.log("hellooo");
   };
 
   const queryRijksMuseum = event => {
@@ -273,20 +286,31 @@ function PostToApp() {
           ) : (
             <div>Nothing to display</div>
           )}
+          <BottomBand
+            artworks={currentSelectedArt}
+            deleteSelectedArtworkCard={deleteSelectedArtworkCard}
+            changeStateToEditing={changeStateToEditing}
+            onSearchPage={onSearchPage}
+          ></BottomBand>{" "}
         </>
       ) : (
-        <EditSelectedArtworks
-          artworks={currentSelectedArt}
-          deleteSelectedArtworkCard={deleteSelectedArtworkCard}
-          changeUserDescription={changeUserDescription}
-        ></EditSelectedArtworks>
+        <>
+          <EditSelectedArtworks
+            artworks={currentSelectedArt}
+            deleteSelectedArtworkCard={deleteSelectedArtworkCard}
+            changeUserDescription={changeUserDescription}
+            changeGalleryBodyFunc={changeGalleryBodyFunc}
+            changeGalleryTitleFunc={changeGalleryTitleFunc}
+            userTitle={galleryTitle}
+            userBody={galleryBody}
+          ></EditSelectedArtworks>
+          <BottomBandSubmitGallery
+            changeStateToEditing={changeStateToEditing}
+            onSearchPage={onSearchPage}
+            createPost={createPostFunc}
+          ></BottomBandSubmitGallery>
+        </>
       )}
-      <BottomBand
-        artworks={currentSelectedArt}
-        deleteSelectedArtworkCard={deleteSelectedArtworkCard}
-        changeStateToEditing={changeStateToEditing}
-        onSearchPage={onSearchPage}
-      ></BottomBand>{" "}
     </>
   );
 }

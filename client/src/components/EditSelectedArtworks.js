@@ -5,7 +5,11 @@ import { Form, Card, Col, Container, Row } from "react-bootstrap";
 function EditSelectedArtworks({
   artworks,
   deleteSelectedArtworkCard,
-  changeUserDescription
+  changeUserDescription,
+  changeGalleryBodyFunc,
+  changeGalleryTitleFunc,
+  userTitle,
+  userBody
 }) {
   return (
     <Container className="editGalleryContainer">
@@ -17,7 +21,9 @@ function EditSelectedArtworks({
             <Form.Control
               type="text"
               size="lg"
+              value={userTitle}
               placeholder="Please Input Your Gallery Title Here..."
+              onChange={e => changeGalleryTitleFunc(e)}
             />
           </Form.Group>
         </Form>
@@ -28,6 +34,8 @@ function EditSelectedArtworks({
               type="textarea"
               size="lg"
               placeholder="Please Input Your Gallery Title Here..."
+              value={userBody}
+              onChange={e => changeGalleryBodyFunc(e)}
             />
           </Form.Group>
         </Form>

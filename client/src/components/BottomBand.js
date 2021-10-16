@@ -15,7 +15,7 @@ function BottomBand({
   //   );
   // };
   return (
-    <div id="bottomBand">
+    <div id="bottomBand" className="withArt">
       {artworks.map(art => (
         <div className="thumbnailAndTitle">
           <Button icon onClick={() => deleteSelectedArtworkCard(art.title)}>
