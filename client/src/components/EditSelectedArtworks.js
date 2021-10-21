@@ -33,7 +33,7 @@ function EditSelectedArtworks({
             <Form.Control
               type="textarea"
               size="lg"
-              placeholder="Please Input Your Gallery Title Here..."
+              placeholder="Please Input Your Gallery Rationale Here..."
               value={userBody}
               onChange={e => changeGalleryBodyFunc(e)}
             />

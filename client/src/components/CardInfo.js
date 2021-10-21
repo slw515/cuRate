@@ -75,8 +75,8 @@ function CardInfo({
     console.log("commented!");
   }
   return (
-    <Card>
-      {user && user.username === username ? (
+    <Card className="cardInfoHome">
+      {/* {user && user.username === username ? (
         <Button
           className="editButtonOwnPost"
           color="teal"
@@ -88,8 +88,22 @@ function CardInfo({
         </Button>
       ) : (
         <></>
-      )}
-      <Card.Img variant="top" src={gallery[0].image} />
+      )} */}
+      <Card.Header variant="top">
+        <div class="imageContainer">
+          <img src={gallery[0].image} />
+        </div>
+        <div class="imageContainer">
+          <img src={gallery[1].image} />
+        </div>{" "}
+        <div class="imageContainer">
+          <img src={gallery[1].image} />
+        </div>
+        <div class="imageContainer">
+          <img src={gallery[0].image} />
+        </div>{" "}
+      </Card.Header>
+
       <Card.Body>
         <a as={Link} to={`/posts/${id}`}>
           <Card.Title as={Link} to={`/posts/${id}`}>
@@ -97,40 +111,47 @@ function CardInfo({
           </Card.Title>
         </a>
         <a as={Link} to={`/posts/${id}`}>
-          <Card.Text>{body}</Card.Text>
+          <Card.Text>By: {username}</Card.Text>
         </a>
-        <Button as="div" color="red" labelPosition="right" onClick={likePost}>
-          <Button color="red" className={`${isLiked() ? "" : "basic"}`}>
-            <Icon name="heart" />
+        <div className="cardsHomeButtonsWrapper">
+          <Button as="div" color="red" labelPosition="right" onClick={likePost}>
+            <Button
+              color="red"
+              className={`${isLiked() ? "" : "basic"}`}
+              as={Link}
+              to={`${user ? `/` : `/login`}`}
+            >
+              <Icon name="heart" />
+            </Button>
+            <Label as="a" basic color="red" pointing="left">
+              {likes.length}
+            </Label>
           </Button>
-          <Label as="a" basic color="red" pointing="left">
-            {likes.length}
-          </Label>
-        </Button>
-        <Button
-          as="div"
-          labelPosition="right"
-          onClick={comment}
-          as={Link}
-          to={`${user ? `/posts/${id}` : `/login`}`}
-        >
-          <Button color="blue" basic onClick={deletePostFunc}>
-            <Icon name="comment" />
+          <Button
+            as="div"
+            labelPosition="right"
+            onClick={comment}
+            as={Link}
+            to={`${user ? `/posts/${id}` : `/login`}`}
+          >
+            <Button color="blue" basic>
+              <Icon name="comment" />
+            </Button>
+            <Label as="a" basic color="blue" pointing="left">
+              {comments.length}
+            </Label>
           </Button>
-          <Label as="a" basic color="blue" pointing="left">
-            {comments.length}
-          </Label>
-        </Button>
-        {user && user.username === username ? (
-          <Button color="red" onClick={deletePostFunc}>
-            {" "}
-            Delete Post
-          </Button>
-        ) : (
-          <></>
-        )}
+          {/* {user && user.username === username ? (
+            <Button color="red" onClick={deletePostFunc}>
+              {" "}
+              Delete Post
+            </Button>
+          ) : (
+            <></>
+          )} */}
+        </div>
         <Card.Footer>
-          <small className="text-muted">Last updated 3 mins ago</small>
+          <small className="text-muted">{createdAt.split("T")[0]}</small>
         </Card.Footer>
       </Card.Body>
     </Card>

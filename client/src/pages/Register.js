@@ -88,7 +88,7 @@ function Register(props) {
           />
         </Form.Group>
         <Button variant="primary" type="submit">
-          Submit
+          Register
         </Button>
       </Form>
       {Object.keys(errors).length > 0 && (

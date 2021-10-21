@@ -15,7 +15,11 @@ function BottomBand({
   //   );
   // };
   return (
-    <div id="bottomBand" className="withArt">
+    <div
+      id="bottomBand"
+      className="withArt"
+      className={`${artworks.length > 0 ? "withArt" : "empty"}`}
+    >
       {artworks.map(art => (
         <div className="thumbnailAndTitle">
           <Button icon onClick={() => deleteSelectedArtworkCard(art.title)}>
@@ -26,9 +30,22 @@ function BottomBand({
         </div>
       ))}
       <div className="editAndCreatePost">
-        <Button color="green" icon onClick={() => changeStateToEditing()}>
+        <Button
+          color="green"
+          icon
+          onClick={() => changeStateToEditing()}
+          disabled={artworks.length > 1 && onSearchPage ? false : true}
+        >
           {/* <Icon name="caret square right" /> */}
-          {onSearchPage ? <p>Edit And Create Post</p> : <p>Back To Search</p>}
+          {onSearchPage ? (
+            <p>
+              {artworks.length > 1 && onSearchPage
+                ? "Edit And Create Gallery"
+                : `Please Have At Least Two Artworks In The Gallery`}
+            </p>
+          ) : (
+            <p>Back To Search</p>
+          )}
         </Button>
       </div>
     </div>

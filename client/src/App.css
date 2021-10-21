@@ -15,12 +15,16 @@
   width: 100%;
   left: 0;
   background-color: #eee;
+  display: flex;
+  justify-content: center;
 }
 
 #bottomBand.withArt {
   height: 200px;
-  display: flex;
-  justify-content: center;
+}
+
+#bottomBand .empty {
+  height: auto;
 }
 
 #bottomBand.editSubmit {
@@ -34,7 +38,7 @@
   margin: 10px;
 }
 
-#bottomBand.withArt .editAndCreatePost {
+#bottomBand .editAndCreatePost {
   position: absolute;
   bottom: 0;
   width: 100%;
@@ -46,13 +50,18 @@
   margin: auto;
 }
 
-#bottomBand.withArt .editAndCreatePost .button {
+#bottomBand .editAndCreatePost .button {
   height: 40px;
   width: 100%;
   margin: 6px;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+#bottomBand .editAndCreatePost .button.disabled {
+  background: #9adfaa;
+  opacity: 1 !important;
 }
 
 #bottomBand .thumbnailAndTitle {
@@ -64,27 +73,42 @@
   font-family: Lato, "Helvetica Neue", Arial, Helvetica, sans-serif;
   position: relative;
   height: calc(100% - 67px);
+  width: 5%;
+  padding: auto 4px;
 }
 
 #bottomBand .thumbnailAndTitle:hover {
   background: hsl(206, 8%, 36%);
+  cursor: default;
+}
+
+#bottomBand .thumbnailAndTitle {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+#bottomBand .thumbnailAndTitle:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 4px rgba(0, 0, 0, 0.14);
 }
 
 #bottomBand .thumbnailAndTitle img {
-  width: 60px;
+  max-width: 90%;
   height: auto;
   overflow: hidden;
-  max-height: 75px;
+  max-height: 40%;
 }
 
 #bottomBand .thumbnailAndTitle p {
-  font-size: 1rem;
-  max-width: 100px;
-  max-height: 50px;
+  display: -webkit-box;
+  max-width: 400px;
+  margin: 6px auto;
+  font-size: 12px;
+  line-height: 18px;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  padding: 6px;
-  margin-bottom: 2px;
-  font-weight: normal;
+  text-overflow: ellipsis;
+  width: 100%;
 }
 
 #bottomBand .thumbnailAndTitle button {
@@ -93,6 +117,7 @@
   position: absolute;
   top: -8px;
   right: -8px;
+  margin: 0;
 }
 
 #bottomBand .thumbnailAndTitle button .delete {
@@ -115,18 +140,24 @@
 }
 .paginationBottomWrapper {
   margin-bottom: 240px;
+  margin-top: 2em;
   list-style: none;
 }
 
 .paginationBottomWrapper ul {
   list-style: none;
+  margin: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 }
 
 .paginationBottomWrapper .paginationCreateGallery li {
   color: black;
-  float: left;
+  /* float: left; */
   padding: 8px 16px;
   text-decoration: none;
+  height: 38px;
 }
 .paginationBottomWrapper .paginationCreateGallery li.active {
   background-color: #4caf50;
@@ -194,4 +225,104 @@
 .singlePagePost p {
   font-size: 1rem;
   color: #333;
+}
+
+.tab-pane .col-md-4 .card .card-footer {
+  margin-top: 12px;
+}
+
+.tab-pane .col-md-4 .card .card-header img {
+  /* float: left;
+  width: 50%;
+  height: auto; */
+}
+
+.commentCard {
+  margin-bottom: 12px;
+  margin-left: 40px;
+}
+
+#commentsSection .submitComment {
+  float: right;
+  margin: 12px auto;
+}
+#commentsSection .submitComment a {
+  color: white !important;
+}
+
+.commentCard .card-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.commentCard .card-text {
+  font-size: 1.1rem;
+  font-weight: 100;
+  color: #666;
+}
+
+.commentCard .deleteComment {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 6px !important;
+}
+
+.commentCard .deleteComment i {
+  margin: 0 !important;
+}
+
+.cardsHomeButtonsWrapper {
+  margin: 12px auto;
+}
+
+.cardInfoHome .card-body .card-title {
+  font-size: 1.3rem;
+}
+
+.cardInfoHome {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.cardInfoHome:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 4px rgba(0, 0, 0, 0.14);
+}
+.cardInfoHome .card-header {
+  display: flex;
+  flex: 1 0 0;
+  overflow-x: hidden;
+  align-items: center;
+  background: #eee;
+}
+
+.cardInfoHome .card-header .imageContainer {
+  flex: 1 0 0;
+  overflow-x: hidden;
+  width: 40%;
+}
+
+.cardInfoHome .card-header .imageContainer:last-child {
+  flex: 0 0 1;
+  overflow-x: hidden;
+}
+
+.cardInfoHome .card-header .imageContainer img {
+  width: auto;
+  height: 100%;
+  max-height: 200px;
+}
+
+.centerLoading {
+  margin-top: 4rem;
+  text-align: center;
+}
+
+.ui.modals .ui.small {
+  position: absolute;
+  float: left;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  height: auto;
 }

@@ -1,10 +1,18 @@
 import React, { createContext, useReducer } from "react";
 import jwtDecode from "jwt-decode";
 const UserContext = createContext({ user: null });
-var userTokenDecoded = null;
+var isUserLoggedIn = null;
+
 if (localStorage.getItem("loggedInToken")) {
-  userTokenDecoded = jwtDecode(localStorage.getItem("loggedInToken"));
+  var userTokenDecoded = jwtDecode(localStorage.getItem("loggedInToken"));
+
+  if (userTokenDecoded.exp * 1000 < Date.now()) {
+    localStorage.removeItem("loggedInToken");
+  } else {
+    isUserLoggedIn = userTokenDecoded;
+  }
 }
+
 function userAuthReducer(state, action) {
   switch (action.type) {
     case "login":
@@ -24,7 +32,7 @@ function userAuthReducer(state, action) {
 //code taken from here: https://reactjs.org/docs/hooks-reference.html#usereducer
 function UserAuthProvider(props) {
   const [state, dispatch] = useReducer(userAuthReducer, {
-    user: userTokenDecoded
+    user: isUserLoggedIn
   });
 
   const logout = () => {

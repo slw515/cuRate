@@ -4,7 +4,7 @@ import gql from "graphql-tag";
 import { Container, Card, Row, Tab, Tabs } from "react-bootstrap";
 import CardInfo from "../components/CardInfo";
 import PostToApp from "../components/PostToApp";
-
+import loadingImage from "../images/loading.gif";
 import { UserContext } from "../contextComponents/auth";
 
 function Home() {
@@ -35,7 +35,9 @@ function Home() {
           <Container>
             <Row>
               {loading ? (
-                <h1>Loading Posts...</h1>
+                <div className="centerLoading">
+                  <img src={loadingImage} />
+                </div>
               ) : (
                 data.getPosts &&
                 data.getPosts.map(post => (

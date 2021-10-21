@@ -6,8 +6,9 @@ import { useMutation } from "@apollo/react-hooks";
 import ReactPaginate from "react-paginate";
 import BottomBand from "./BottomBand";
 import BottomBandSubmitGallery from "./BottomBandSubmitGallery";
-
 import EditSelectedArtworks from "./EditSelectedArtworks";
+import loadingImage from "../images/loading.gif";
+const { API_KEY } = require("../config");
 
 function PostToApp() {
   const { user } = useContext(UserContext);
@@ -18,46 +19,86 @@ function PostToApp() {
     createdAt: null
   });
 
+  const periods = [
+    { id: "21st Century", value: "21" },
+    { id: "20th Century", value: "20" },
+    { id: "19th Century", value: "19" },
+    { id: "18th Century", value: "18" },
+    { id: "17th Century", value: "17" },
+    { id: "16th Century", value: "16" },
+    { id: "15th Century", value: "15" },
+    { id: "14th Century", value: "14" },
+    { id: "13th Century", value: "13" },
+    { id: "12th Century", value: "12" },
+    { id: "11th Century", value: "11" },
+    { id: "10th Century", value: "10" },
+    { id: "9th Century", value: "9" },
+    { id: "8th Century", value: "8" },
+    { id: "7th Century", value: "7" },
+    { id: "6th Century", value: "6" },
+    { id: "5th Century", value: "5" },
+    { id: "4th Century", value: "4" },
+    { id: "3rd Century", value: "3" },
+    { id: "2nd Century", value: "2" },
+    { id: "1st Century", value: "1" }
+  ];
+
   const [currentSelectedArt, addRemoveSelectedArt] = useState([]);
   const [onSearchPage, changeSearchingWorksOrEditing] = useState(true);
   const [galleryTitle, changeGalleryTitle] = useState("");
   const [galleryBody, changeGalleryBody] = useState("");
 
   const [queryParams, setQueryParams] = useState({
-    technique: "",
-    material: "",
-    place: "",
-    catalogueTitle: ""
-  });
+    artist: "",
 
+    period: ""
+  });
   const [hits, setHits] = useState([]);
 
   const [pageCount, setPageCount] = useState(1);
 
   const [isLoaded, setisLoaded] = useState(false);
 
-  const [currentPage, setcurrentPage] = useState(0);
+  const [currentPage, setcurrentPage] = useState(1);
 
   const [department, setDepartment] = useState(0);
   const [query, setQuery] = useState(0);
 
-  const URL = `https://www.rijksmuseum.nl/api/en/collection?key=NgATnvIb&ps=9&imgonly=true&p=${currentPage}&technique=${queryParams.technique}&material=${queryParams.material}&culture=${queryParams.place}`;
+  const URL = `https://www.rijksmuseum.nl/api/en/collection?key=${API_KEY}&ps=9&imgonly=True&p=${currentPage +
+    1}&involvedMaker=${queryParams.artist}&f.dating.period=${
+    queryParams.period
+  }`;
 
   const handleFetch = () => {
     console.log(URL);
+    setisLoaded(false);
     fetch(URL)
       .then(response => response.json())
 
       .then(body => {
+        console.log("first");
         setHits([...body.artObjects]);
-        setPageCount(Math.ceil(body.count / 20));
+        // console.log(hits);
+        setPageCount(() => {
+          if (body.count > 10000) {
+            //upper limit on page placed by Rijksmusum API
+            return 1111;
+          } else {
+            return Math.ceil(body.count / 9);
+          }
+        });
+        return true;
+      })
+      .then(() => {
         setisLoaded(true);
 
+        console.log("seconds");
         var checkboxes = document.getElementsByClassName("form-check-input");
         for (var i = 0; i < checkboxes.length; i++) {
           var isTrue = false;
           for (var x = 0; x < currentSelectedArt.length; x++) {
             if (currentSelectedArt[x].title == checkboxes[i].value) {
+              console.log(currentSelectedArt[x].title + " is true");
               isTrue = true;
               break;
             }
@@ -69,6 +110,9 @@ function PostToApp() {
           }
         }
       })
+
+      // .then(() => {
+      // })
 
       .catch(error => console.error("Error", error));
   };
@@ -100,11 +144,8 @@ function PostToApp() {
   const handlePageChange = selectedObject => {
     setcurrentPage(selectedObject.selected);
   };
-
-  const inputChange = event => {
-    setPostContent({ ...postContent, [event.target.name]: event.target.value });
-  };
   const changeQueryParams = event => {
+    console.log(event.target);
     setQueryParams({ ...queryParams, [event.target.name]: event.target.value });
   };
   const [createPost, { error }] = useMutation(CREATE_POST_MUTATION, {
@@ -134,8 +175,9 @@ function PostToApp() {
 
   const createPostFunc = event => {
     event.preventDefault();
-    createPost();
-    console.log("hellooo");
+    if (currentSelectedArt.length > 3) {
+      createPost();
+    }
   };
 
   const queryRijksMuseum = event => {
@@ -197,42 +239,41 @@ function PostToApp() {
             <Row style={{ marginBottom: "6px" }}>
               <Col>
                 <Form.Control
-                  placeholder="Technique"
-                  name="technique"
-                  value={queryParams.technique}
-                  onChange={changeQueryParams}
-                />
-              </Col>
-              <Col>
-                <Form.Control
-                  placeholder="Material"
-                  name="material"
-                  value={queryParams.material}
+                  placeholder="Artist"
+                  name="artist"
+                  value={queryParams.artist}
                   onChange={changeQueryParams}
                 />
               </Col>
             </Row>
-            <Row>
+            <Row style={{ marginBottom: "6px" }}>
               <Col>
-                <Form.Control
-                  placeholder="Place"
-                  name="place"
-                  value={queryParams.place}
+                <Form.Select
+                  aria-label="Default select example"
                   onChange={changeQueryParams}
-                />
-              </Col>
-              <Col>
-                <Form.Control
-                  placeholder="Catalogue Title"
-                  name="catalogueTitle"
-                  value={queryParams.catalogueTitle}
-                  onChange={changeQueryParams}
-                />
+                  name="period"
+                >
+                  <option value="" disabled selected hidden>
+                    Select A Period...
+                  </option>
+                  <option value="">All</option>
+                  {periods.map(period => (
+                    <option value={period.value}>{period.id}</option>
+                  ))}
+                </Form.Select>
               </Col>
             </Row>
-            <Button variant="primary" type="submit">
-              Search Collection
-            </Button>
+            <Row style={{ marginBottom: "6px" }}>
+              <Col>
+                <Button
+                  variant="primary"
+                  type="submit"
+                  style={{ width: "100%" }}
+                >
+                  Search Collection
+                </Button>
+              </Col>
+            </Row>
           </Form>
           <Container className="createGalleryContainer">
             <Row>
@@ -251,9 +292,15 @@ function PostToApp() {
                         <Card.Img variant="top" src={item.webImage.url} />
                         <Card.Body>
                           <Card.Title>{item.title}</Card.Title>
+                          <Card.Text>{item.principalOrFirstMaker}</Card.Text>
                           <Card.Text>
-                            Some quick example text to build on the card title
-                            and make up the bulk of the card's content.
+                            <small className="text-muted">
+                              {item.productionPlaces != null ? (
+                                item.productionPlaces[0]
+                              ) : (
+                                <></>
+                              )}
+                            </small>
                           </Card.Text>
                           <a href={item.links.web} target="_blank">
                             <Button variant="primary">Learn More</Button>
@@ -264,29 +311,32 @@ function PostToApp() {
                   );
                 })
               ) : (
-                <div></div>
+                <div className="centerLoading">
+                  <img src={loadingImage} />
+                </div>
               )}
             </Row>
           </Container>
-          {isLoaded ? (
-            <div className="paginationBottomWrapper">
-              <ReactPaginate
-                pageCount={pageCount}
-                pageRange={2}
-                marginPagesDisplayed={2}
-                onPageChange={handlePageChange}
-                previousLinkClassName={"page"}
-                containerClassName={"paginationCreateGallery"}
-                breakClassName={"break-me"}
-                nextLinkClassName={"page"}
-                pageClassName={"page"}
-                disabledClassNae={"disabled"}
-                activeClassName={"active"}
-              />
-            </div>
-          ) : (
+          {/* {isLoaded ? ( */}
+          <div className="paginationBottomWrapper">
+            <ReactPaginate
+              pageCount={pageCount}
+              pageRange={2}
+              initialPage={0}
+              marginPagesDisplayed={2}
+              onPageChange={handlePageChange}
+              previousLinkClassName={"page"}
+              containerClassName={"paginationCreateGallery"}
+              breakClassName={"break-me"}
+              nextLinkClassName={"page"}
+              pageClassName={"page"}
+              disabledClassNae={"disabled"}
+              activeClassName={"active"}
+            />
+          </div>
+          {/* ) : (
             <div>Nothing to display</div>
-          )}
+          )} */}
           <BottomBand
             artworks={currentSelectedArt}
             deleteSelectedArtworkCard={deleteSelectedArtworkCard}
@@ -309,6 +359,9 @@ function PostToApp() {
             changeStateToEditing={changeStateToEditing}
             onSearchPage={onSearchPage}
             createPost={createPostFunc}
+            currentSelectedArt={currentSelectedArt}
+            titleText={galleryTitle}
+            bodyText={galleryBody}
           ></BottomBandSubmitGallery>
         </>
       )}

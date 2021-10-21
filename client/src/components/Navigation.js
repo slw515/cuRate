@@ -15,9 +15,14 @@ function Navigation() {
   return user ? (
     <Navbar bg="light" expand="lg">
       <Nav className="container" style={{ maxHeight: "100px" }} navbarScroll>
-        <NavLink to="/ " className="nav-link" activeClassName="active">
-          CuRate
-        </NavLink>
+        <div style={{ display: "flex", flexDirection: "row" }}>
+          <NavLink to="/" className="nav-link" activeClassName="active">
+            Home
+          </NavLink>
+          <NavLink to="/about" className="nav-link" activeClassName="active">
+            About
+          </NavLink>
+        </div>
         <Nav.Item className="d-flex">
           <p>Welcome, {user.username}</p>
           <Button onClick={logout}>Logout</Button>
@@ -27,7 +32,7 @@ function Navigation() {
   ) : (
     <Navbar bg="light" expand="lg">
       <Nav className="container" style={{ maxHeight: "100px" }} navbarScroll>
-        <NavLink to="/ " className="nav-link" activeClassName="active">
+        <NavLink to="/" className="nav-link" activeClassName="active">
           Home
         </NavLink>
 

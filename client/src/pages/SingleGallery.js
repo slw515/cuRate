@@ -1,21 +1,58 @@
 import React, { useContext, useState } from "react";
 import gql from "graphql-tag";
 import { Container, Row, Col, Card, Form } from "react-bootstrap";
-import { Button, Icon, Label } from "semantic-ui-react";
+import { Button, Icon, Label, Confirm } from "semantic-ui-react";
 import { useMutation } from "@apollo/react-hooks";
-
+import loadingImage from "../images/loading.gif";
 import { useQuery } from "@apollo/react-hooks";
 import { UserContext } from "../contextComponents/auth";
 
 function SingleGallery(props) {
   const postId = props.match.params.postId;
+  const [confirmDelete, setConfirmDelete] = useState(false);
+
   const { user } = useContext(UserContext);
   console.log(postId);
-  let postMarkup;
+  let postContent;
   const [comment, setComment] = useState("");
 
   const [likePost, { erro }] = useMutation(LIKE_POST_MUTATION, {
     variables: { postId },
+    update(proxy, result) {
+      const data = proxy.readQuery({
+        query: RETRIEVE_POSTS_QUERY
+      });
+      proxy.writeQuery({
+        query: RETRIEVE_POSTS_QUERY,
+        data: {
+          getPosts: data.getPosts.filter(
+            post => post.id != result.data.deletePost
+          )
+        }
+      });
+    },
+    onError(err) {
+      return err;
+    }
+  });
+
+  const [deletePost, { error }] = useMutation(DELETE_POST_MUTATION, {
+    variables: { postId },
+    update(proxy, result) {
+      const data = proxy.readQuery({
+        query: RETRIEVE_POSTS_QUERY
+      });
+      proxy.writeQuery({
+        query: RETRIEVE_POSTS_QUERY,
+        data: {
+          getPosts: data.getPosts.filter(
+            post => post.id != result.data.deletePost
+          )
+        }
+      });
+      props.history.push("/");
+    },
+
     onError(err) {
       return err;
     }
@@ -33,7 +70,9 @@ function SingleGallery(props) {
 
   const submitCommentFunc = event => {
     event.preventDefault();
-    submitComment();
+    if (user) {
+      submitComment();
+    }
   };
 
   var isLiked = () => {
@@ -60,7 +99,11 @@ function SingleGallery(props) {
   });
 
   if (!data) {
-    postMarkup = <p>Loading post..</p>;
+    postContent = (
+      <div className="centerLoading">
+        <img src={loadingImage} />
+      </div>
+    );
   } else {
     const {
       id,
@@ -72,16 +115,36 @@ function SingleGallery(props) {
       likes,
       gallery
     } = data.getPost;
-    postMarkup = (
+    postContent = (
       <Container className="singlePagePost">
         {" "}
         <Row style={{ marginBottom: "50px" }}>
           <Card>
             <Card.Body>
               <h1>{title}</h1>
-              <Card.Text>{body}</Card.Text>
+              <Card.Text>Created by:{body}</Card.Text>
             </Card.Body>
-            <div style={{ marginBottom: "12px" }}>
+            <div style={{ padding: "1rem 1rem" }}>
+              {user != null && user.username == username ? (
+                <>
+                  <Button
+                    color="red"
+                    onClick={() => setConfirmDelete(true)}
+                    style={{ float: "left" }}
+                    // onConfirm={deletePost}
+                  >
+                    {" "}
+                    Delete Post
+                  </Button>
+                  <Confirm
+                    open={confirmDelete}
+                    onCancel={() => setConfirmDelete(false)}
+                    onConfirm={deletePost}
+                  />
+                </>
+              ) : (
+                <></>
+              )}
               <Button
                 as="div"
                 color="red"
@@ -97,7 +160,7 @@ function SingleGallery(props) {
                 </Label>
               </Button>
               <Button as="div" labelPosition="right" style={{ float: "right" }}>
-                <Button color="blue" basic>
+                <Button as="a" href="#commentsSection" color="blue" basic>
                   <Icon name="comment" />
                 </Button>
                 <Label as="a" basic color="blue" pointing="left">
@@ -110,52 +173,74 @@ function SingleGallery(props) {
         <Row>
           <h1>Artworks</h1>
           {gallery.map(item => (
-            <div className="col-md-4">
+            <div className="col-md-4" style={{ marginTop: "12px" }}>
               <Card className="artworkCard">
                 <Card.Img variant="top" src={item.image} />
                 <Card.Body>
                   <Card.Title>{item.title}</Card.Title>
                   <Card.Text>{item.userDescription}</Card.Text>
+                  <small className="text-muted">{item.artist}</small>
                 </Card.Body>
               </Card>
             </div>
           ))}
         </Row>
-        <Row style={{ marginTop: "50px" }}>
+        <Row id="commentsSection" style={{ marginTop: "50px" }}>
           <h1>Comments:</h1>
           <Form onSubmit={submitCommentFunc}>
             <Form.Group
               className="mb-3"
               controlId="exampleForm.ControlTextarea1"
             >
-              <Form.Label>Submit Comment:</Form.Label>
               <Form.Control
                 as="textarea"
-                rows={3}
+                rows={4}
+                placeholder="Type your comment here..."
                 onChange={e => {
                   setComment(e.target.value);
                 }}
               />
-              <Button variant="primary" type="submit">
-                Submit
+              <Button
+                className="submitComment"
+                variant="primary"
+                color="blue"
+                type="submit"
+              >
+                {user != null ? "Submit" : "Please Log In To Submit Comments"}
               </Button>
             </Form.Group>
           </Form>
-          {comments.map(item => (
-            <div className="col-md-12" style={{ margin: "20px 20px" }}>
-              <Card className="artworkCard">
+          <div
+            className="col-md-12"
+            style={{ margin: "20px 0px 10px 20px" }}
+            id="commentsSection"
+          >
+            {comments.map(item => (
+              <Card className="commentCard">
                 <Card.Body>
                   <Card.Title>{item.username}</Card.Title>
                   <Card.Text>{item.body}</Card.Text>
+                  <Card.Footer>
+                    <small className="text-muted">
+                      {item.createdAt.split("T")[0]}
+                    </small>
+                  </Card.Footer>{" "}
                 </Card.Body>
+                {user != null && user.username == item.username ? (
+                  <Button className="deleteComment" color="red">
+                    <Icon name="delete" />
+                  </Button>
+                ) : (
+                  <></>
+                )}
               </Card>
-            </div>
-          ))}
+            ))}
+          </div>
         </Row>
       </Container>
     );
   }
-  return postMarkup;
+  return postContent;
 }
 
 const RETRIEVE_POST_QUERY = gql`
@@ -186,6 +271,31 @@ const RETRIEVE_POST_QUERY = gql`
   }
 `;
 
+const DELETE_POST_MUTATION = gql`
+  mutation deletePost($postId: ID!) {
+    deletePost(postId: $postId)
+  }
+`;
+
+const RETRIEVE_POSTS_QUERY = gql`
+  {
+    getPosts {
+      id
+      body
+      username
+      createdAt
+      comments {
+        body
+        username
+        createdAt
+      }
+      likes {
+        username
+        createdAt
+      }
+    }
+  }
+`;
 const POST_COMMENT_MUTATION = gql`
   mutation($postId: String!, $body: String!) {
     createComment(postId: $postId, body: $body) {
