@@ -21,12 +21,8 @@ const httpLink = createHttpLink({
   uri: "http://localhost:5000"
 });
 
-function generateTokenAndLink(token, link) {
-  return token.concat(link);
-}
-
 const client = new ApolloClient({
-  link: generateTokenAndLink(setAuthorizationLink, httpLink),
+  link: setAuthorizationLink.concat(httpLink),
   cache: new InMemoryCache()
 });
 
