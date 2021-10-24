@@ -8,7 +8,7 @@ import BottomBand from "./BottomBand";
 import BottomBandSubmitGallery from "./BottomBandSubmitGallery";
 import EditSelectedArtworks from "./EditSelectedArtworks";
 import loadingImage from "../images/loading.gif";
-const { API_KEY } = require("../config");
+const { API_KEY } = require("../config.js");
 
 function PostToApp(props) {
   const { user } = useContext(UserContext);
