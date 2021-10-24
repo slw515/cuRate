@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import gql from "graphql-tag";
 import { Container, Row, Col, Card, Form } from "react-bootstrap";
 import { Button, Icon, Label, Confirm } from "semantic-ui-react";
@@ -6,13 +6,13 @@ import { useMutation } from "@apollo/react-hooks";
 import loadingImage from "../images/loading.gif";
 import { useQuery } from "@apollo/react-hooks";
 import { UserContext } from "../contextComponents/auth";
-
+import Comment from "../components/Comment";
 function SingleGallery(props) {
   const postId = props.match.params.postId;
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [commentId, setCommentId] = useState("");
 
   const { user } = useContext(UserContext);
-  console.log(postId);
   let postContent;
   const [comment, setComment] = useState("");
 
@@ -21,14 +21,6 @@ function SingleGallery(props) {
     update(proxy, result) {
       const data = proxy.readQuery({
         query: RETRIEVE_POSTS_QUERY
-      });
-      proxy.writeQuery({
-        query: RETRIEVE_POSTS_QUERY,
-        data: {
-          getPosts: data.getPosts.filter(
-            post => post.id != result.data.deletePost
-          )
-        }
       });
     },
     onError(err) {
@@ -72,7 +64,30 @@ function SingleGallery(props) {
     event.preventDefault();
     if (user) {
       submitComment();
+      document.getElementById("commentSubmissionTextArea").value = "";
     }
+  };
+
+  const [deleteCommentMutate, { errors }] = useMutation(
+    DELETE_COMMENT_MUTATION,
+    {
+      update() {
+        setCommentId("");
+      },
+      variables: { postId, commentId },
+
+      onError(err) {
+        return err;
+      }
+    }
+  );
+
+  useEffect(() => {
+    deleteCommentMutate();
+  }, [commentId]);
+
+  const deleteCommentFunc = event => {
+    setCommentId(event.target.id);
   };
 
   var isLiked = () => {
@@ -122,7 +137,7 @@ function SingleGallery(props) {
           <Card>
             <Card.Body>
               <h1>{title}</h1>
-              <Card.Text>Created by:{body}</Card.Text>
+              <Card.Text>Created by: {body}</Card.Text>
             </Card.Body>
             <div style={{ padding: "1rem 1rem" }}>
               {user != null && user.username == username ? (
@@ -188,14 +203,12 @@ function SingleGallery(props) {
         <Row id="commentsSection" style={{ marginTop: "50px" }}>
           <h1>Comments:</h1>
           <Form onSubmit={submitCommentFunc}>
-            <Form.Group
-              className="mb-3"
-              controlId="exampleForm.ControlTextarea1"
-            >
+            <Form.Group className="mb-3">
               <Form.Control
                 as="textarea"
                 rows={4}
                 placeholder="Type your comment here..."
+                id="commentSubmissionTextArea"
                 onChange={e => {
                   setComment(e.target.value);
                 }}
@@ -216,24 +229,11 @@ function SingleGallery(props) {
             id="commentsSection"
           >
             {comments.map(item => (
-              <Card className="commentCard">
-                <Card.Body>
-                  <Card.Title>{item.username}</Card.Title>
-                  <Card.Text>{item.body}</Card.Text>
-                  <Card.Footer>
-                    <small className="text-muted">
-                      {item.createdAt.split("T")[0]}
-                    </small>
-                  </Card.Footer>{" "}
-                </Card.Body>
-                {user != null && user.username == item.username ? (
-                  <Button className="deleteComment" color="red">
-                    <Icon name="delete" />
-                  </Button>
-                ) : (
-                  <></>
-                )}
-              </Card>
+              <Comment
+                item={item}
+                postId={postId}
+                commentId={item.id}
+              ></Comment>
             ))}
           </div>
         </Row>
@@ -252,6 +252,7 @@ const RETRIEVE_POST_QUERY = gql`
       username
       createdAt
       comments {
+        id
         body
         username
         createdAt
@@ -277,6 +278,20 @@ const DELETE_POST_MUTATION = gql`
   }
 `;
 
+const DELETE_COMMENT_MUTATION = gql`
+  mutation deleteComment($postId: ID!, $commentId: ID!) {
+    deleteComment(postId: $postId, commentId: $commentId) {
+      id
+      comments {
+        id
+        username
+        createdAt
+        body
+      }
+    }
+  }
+`;
+
 const RETRIEVE_POSTS_QUERY = gql`
   {
     getPosts {
@@ -285,6 +300,7 @@ const RETRIEVE_POSTS_QUERY = gql`
       username
       createdAt
       comments {
+        id
         body
         username
         createdAt

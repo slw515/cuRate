@@ -29,10 +29,11 @@ function EditSelectedArtworks({
         </Form>
         <h1 style={{ marginTop: "40px" }}>Gallery Rationale</h1>
         <Form>
-          <Form.Group controlId="exampleForm.ControlTextarea1">
+          <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
             <Form.Control
-              type="textarea"
-              size="lg"
+              as="textarea"
+              size="md"
+              rows={12}
               placeholder="Please Input Your Gallery Rationale Here..."
               value={userBody}
               onChange={e => changeGalleryBodyFunc(e)}
@@ -52,7 +53,7 @@ function EditSelectedArtworks({
                 <Icon name="delete" />
               </Button>
               <img src={art.image} />
-              <p>{art.title}</p>
+              <p style={{ marginTop: "10px" }}>{art.title}</p>
               <Form>
                 <Form.Group
                   className="mb-3"

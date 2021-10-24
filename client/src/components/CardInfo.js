@@ -97,10 +97,10 @@ function CardInfo({
           <img src={gallery[1].image} />
         </div>{" "}
         <div class="imageContainer">
-          <img src={gallery[1].image} />
+          <img src={gallery[2].image} />
         </div>
         <div class="imageContainer">
-          <img src={gallery[0].image} />
+          <img src={gallery[3].image} />
         </div>{" "}
       </Card.Header>
 

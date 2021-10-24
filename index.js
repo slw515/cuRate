@@ -6,6 +6,8 @@ const typeDefs = require("./graphql/typedefs");
 const resolvers = require("./graphql/resolvers/index");
 const { MONGODB } = require("./config");
 
+const PORT = process.env.PORT || 5000;
+
 const server = new ApolloServer({
   typeDefs,
   resolvers,
@@ -16,7 +18,7 @@ mongoose
   .connect(MONGODB, { useNewUrlParser: true })
   .then(() => {
     console.log("db success");
-    return server.listen({ port: 5000 });
+    return server.listen({ port: PORT });
   })
   .then(res => {
     console.log("server started: " + res.url);

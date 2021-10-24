@@ -10,7 +10,7 @@ import EditSelectedArtworks from "./EditSelectedArtworks";
 import loadingImage from "../images/loading.gif";
 const { API_KEY } = require("../config");
 
-function PostToApp() {
+function PostToApp(props) {
   const { user } = useContext(UserContext);
   const [postContent, setPostContent] = useState({
     username: user.username,
@@ -165,11 +165,13 @@ function PostToApp() {
           getPosts: [result.data.createPost, ...data.getPosts]
         }
       });
-
       //   postContent.body = "";
     },
     onError(err) {
       return err;
+    },
+    onCompleted() {
+      window.location.reload();
     }
   });
 
