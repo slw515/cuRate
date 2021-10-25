@@ -1,7 +1,7 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext } from "react";
 import { useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
-import { Container, Card, Row, Tab, Tabs } from "react-bootstrap";
+import { Container, Row, Tab, Tabs } from "react-bootstrap";
 import CardInfo from "../components/CardInfo";
 import PostToApp from "../components/PostToApp";
 import loadingImage from "../images/loading.gif";
@@ -36,7 +36,7 @@ function Home() {
             <Row>
               {loading ? (
                 <div className="centerLoading">
-                  <img src={loadingImage} />
+                  <img src={loadingImage} alt="Loading..." />
                 </div>
               ) : (
                 data.getPosts &&
@@ -57,7 +57,7 @@ function Home() {
               ) : data.getPosts && user != null ? (
                 data.getPosts.map(function(post, i) {
                   console.log(post.username);
-                  return post.username == user.username ? (
+                  return post.username === user.username ? (
                     <div className="col-md-4" key={post.id}>
                       <CardInfo post={post}></CardInfo>
                     </div>

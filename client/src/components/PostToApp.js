@@ -1,7 +1,7 @@
-import React, { useContext, useState, useEffect } from "react";
+/* eslint-disable */
+import React, { useState, useEffect } from "react";
 import { Form, Button, Card, Col, Container, Row } from "react-bootstrap";
 import gql from "graphql-tag";
-import { UserContext } from "../contextComponents/auth";
 import { useMutation } from "@apollo/react-hooks";
 import ReactPaginate from "react-paginate";
 import BottomBand from "./BottomBand";
@@ -11,14 +11,6 @@ import loadingImage from "../images/loading.gif";
 const { API_KEY } = require("../config.js");
 
 function PostToApp(props) {
-  const { user } = useContext(UserContext);
-  const [postContent, setPostContent] = useState({
-    username: user.username,
-    body: "",
-    id: null,
-    createdAt: null
-  });
-
   const periods = [
     { id: "21st Century", value: "21" },
     { id: "20th Century", value: "20" },
@@ -61,9 +53,6 @@ function PostToApp(props) {
 
   const [currentPage, setcurrentPage] = useState(1);
 
-  const [department, setDepartment] = useState(0);
-  const [query, setQuery] = useState(0);
-
   const URL = `https://www.rijksmuseum.nl/api/en/collection?key=${API_KEY}&ps=9&imgonly=True&p=${currentPage +
     1}&involvedMaker=${queryParams.artist}&f.dating.period=${
     queryParams.period
@@ -97,7 +86,7 @@ function PostToApp(props) {
         for (var i = 0; i < checkboxes.length; i++) {
           var isTrue = false;
           for (var x = 0; x < currentSelectedArt.length; x++) {
-            if (currentSelectedArt[x].title == checkboxes[i].value) {
+            if (currentSelectedArt[x].title === checkboxes[i].value) {
               console.log(currentSelectedArt[x].title + " is true");
               isTrue = true;
               break;
@@ -130,7 +119,7 @@ function PostToApp(props) {
 
   const changeUserDescription = (title, e) => {
     var objIndex = currentSelectedArt.findIndex(
-      artwork => artwork.title == title
+      artwork => artwork.title === title
     );
     var newEntry = currentSelectedArt[objIndex];
     newEntry.userDescription = e.target.value;
@@ -148,7 +137,7 @@ function PostToApp(props) {
     console.log(event.target);
     setQueryParams({ ...queryParams, [event.target.name]: event.target.value });
   };
-  const [createPost, { error }] = useMutation(CREATE_POST_MUTATION, {
+  const [createPost] = useMutation(CREATE_POST_MUTATION, {
     variables: {
       body: galleryBody,
       title: galleryTitle,
@@ -190,7 +179,7 @@ function PostToApp(props) {
   const modifySelectedArt = event => {
     if (event.currentTarget.checked) {
       const artworkObject = hits.find(
-        artwork => artwork.title == event.target.value
+        artwork => artwork.title === event.target.value
       );
       console.log(event.target.value);
       addRemoveSelectedArt([
@@ -205,7 +194,7 @@ function PostToApp(props) {
       ]);
     } else {
       addRemoveSelectedArt(
-        currentSelectedArt.filter(post => post.title != event.target.value)
+        currentSelectedArt.filter(post => post.title !== event.target.value)
       );
     }
   };
@@ -213,7 +202,7 @@ function PostToApp(props) {
   const deleteSelectedArtworkCard = artworkId => {
     if (onSearchPage) {
       for (var i = 0; i < hits.length; i++) {
-        if (hits[i].title == artworkId) {
+        if (hits[i].title === artworkId) {
           document.getElementById(hits[i].id).checked = false;
           break;
         }
@@ -221,9 +210,9 @@ function PostToApp(props) {
     }
 
     addRemoveSelectedArt(
-      currentSelectedArt.filter(post => post.title != artworkId)
+      currentSelectedArt.filter(post => post.title !== artworkId)
     );
-    if (onSearchPage == false && hits.length == 0) {
+    if (onSearchPage === false && hits.length === 0) {
       changeSearchingWorksOrEditing(true);
     }
   };
@@ -291,13 +280,17 @@ function PostToApp(props) {
                             onChange={modifySelectedArt}
                           />
                         </>
-                        <Card.Img variant="top" src={item.webImage.url} />
+                        <Card.Img
+                          variant="top"
+                          src={item.webImage.url}
+                          alt={item.title}
+                        />
                         <Card.Body>
                           <Card.Title>{item.title}</Card.Title>
                           <Card.Text>{item.principalOrFirstMaker}</Card.Text>
                           <Card.Text>
                             <small className="text-muted">
-                              {item.productionPlaces != null ? (
+                              {item.productionPlaces !== null ? (
                                 item.productionPlaces[0]
                               ) : (
                                 <></>
@@ -314,7 +307,7 @@ function PostToApp(props) {
                 })
               ) : (
                 <div className="centerLoading">
-                  <img src={loadingImage} />
+                  <img src={loadingImage} alt="Loading..." />
                 </div>
               )}
             </Row>

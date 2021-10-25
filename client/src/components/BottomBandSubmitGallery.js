@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Icon } from "semantic-ui-react";
+import { Button } from "semantic-ui-react";
 
 function BottomBandSubmitGallery({
   changeStateToEditing,
@@ -21,7 +21,7 @@ function BottomBandSubmitGallery({
         icon
         onClick={e => createPost(e)}
         disabled={
-          currentSelectedArt.length <= 3 || bodyText == "" || titleText == ""
+          currentSelectedArt.length <= 3 || bodyText === "" || titleText === ""
             ? true
             : false
         }

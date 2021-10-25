@@ -1,6 +1,8 @@
+/* eslint-disable */
+
 import React, { useContext, useState, useEffect } from "react";
 import gql from "graphql-tag";
-import { Container, Row, Col, Card, Form } from "react-bootstrap";
+import { Container, Row, Card, Form } from "react-bootstrap";
 import { Button, Icon, Label, Confirm } from "semantic-ui-react";
 import { useMutation } from "@apollo/react-hooks";
 import loadingImage from "../images/loading.gif";
@@ -16,19 +18,15 @@ function SingleGallery(props) {
   let postContent;
   const [comment, setComment] = useState("");
 
-  const [likePost, { erro }] = useMutation(LIKE_POST_MUTATION, {
+  const [likePost] = useMutation(LIKE_POST_MUTATION, {
     variables: { postId },
-    update(proxy, result) {
-      const data = proxy.readQuery({
-        query: RETRIEVE_POSTS_QUERY
-      });
-    },
+    update(proxy, result) {},
     onError(err) {
       return err;
     }
   });
 
-  const [deletePost, { error }] = useMutation(DELETE_POST_MUTATION, {
+  const [deletePost] = useMutation(DELETE_POST_MUTATION, {
     variables: { postId },
     update(proxy, result) {
       const data = proxy.readQuery({
@@ -38,7 +36,7 @@ function SingleGallery(props) {
         query: RETRIEVE_POSTS_QUERY,
         data: {
           getPosts: data.getPosts.filter(
-            post => post.id != result.data.deletePost
+            post => post.id !== result.data.deletePost
           )
         }
       });
@@ -68,27 +66,20 @@ function SingleGallery(props) {
     }
   };
 
-  const [deleteCommentMutate, { errors }] = useMutation(
-    DELETE_COMMENT_MUTATION,
-    {
-      update() {
-        setCommentId("");
-      },
-      variables: { postId, commentId },
+  const [deleteCommentMutate] = useMutation(DELETE_COMMENT_MUTATION, {
+    update() {
+      setCommentId("");
+    },
+    variables: { postId, commentId },
 
-      onError(err) {
-        return err;
-      }
+    onError(err) {
+      return err;
     }
-  );
+  });
 
   useEffect(() => {
     deleteCommentMutate();
   }, [commentId]);
-
-  const deleteCommentFunc = event => {
-    setCommentId(event.target.id);
-  };
 
   var isLiked = () => {
     if (!user) {
@@ -96,7 +87,7 @@ function SingleGallery(props) {
     }
     var liked = false;
     for (var i = 0; i < data.getPost.likes.length; i++) {
-      if (data.getPost.likes[i].username == user.username) {
+      if (data.getPost.likes[i].username === user.username) {
         liked = true;
         return liked;
       }
@@ -116,20 +107,11 @@ function SingleGallery(props) {
   if (!data) {
     postContent = (
       <div className="centerLoading">
-        <img src={loadingImage} />
+        <img src={loadingImage} alt="Loading..." />
       </div>
     );
   } else {
-    const {
-      id,
-      body,
-      title,
-      createdAt,
-      username,
-      comments,
-      likes,
-      gallery
-    } = data.getPost;
+    const { body, title, username, comments, likes, gallery } = data.getPost;
     postContent = (
       <Container className="singlePagePost">
         {" "}
@@ -140,7 +122,7 @@ function SingleGallery(props) {
               <Card.Text>Created by: {body}</Card.Text>
             </Card.Body>
             <div style={{ padding: "1rem 1rem" }}>
-              {user != null && user.username == username ? (
+              {user != null && user.username === username ? (
                 <>
                   <Button
                     color="red"
@@ -190,7 +172,7 @@ function SingleGallery(props) {
           {gallery.map(item => (
             <div className="col-md-4" style={{ marginTop: "12px" }}>
               <Card className="artworkCard">
-                <Card.Img variant="top" src={item.image} />
+                <Card.Img variant="top" src={item.image} alt={item.title} />
                 <Card.Body>
                   <Card.Title>{item.title}</Card.Title>
                   <Card.Text>{item.userDescription}</Card.Text>

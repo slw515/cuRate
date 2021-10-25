@@ -1,5 +1,5 @@
+/* eslint-disable */
 import React from "react";
-import { Container, Row, Card } from "react-bootstrap";
 import { Button, Icon } from "semantic-ui-react";
 
 function BottomBand({
@@ -26,7 +26,7 @@ function BottomBand({
             <Icon name="delete" />
           </Button>
           <p>{art.title}</p>
-          <img src={art.image} />
+          <img src={art.image} alt={art.title} />
         </div>
       ))}
       <div className="editAndCreatePost">

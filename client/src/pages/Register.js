@@ -1,10 +1,8 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { Form, Button, Container } from "react-bootstrap";
 import gql from "graphql-tag";
 import { useMutation } from "@apollo/react-hooks";
-import { UserContext } from "../contextComponents/auth";
 function Register(props) {
-  const userContext = useContext(UserContext);
   const [errors, setErrors] = useState({});
   const [values, setValues] = useState({
     username: "",

@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Icon } from "semantic-ui-react";
-import { Form, Card, Col, Container, Row } from "react-bootstrap";
+import { Form, Container, Row } from "react-bootstrap";
 
 function EditSelectedArtworks({
   artworks,
@@ -52,7 +52,7 @@ function EditSelectedArtworks({
               >
                 <Icon name="delete" />
               </Button>
-              <img src={art.image} />
+              <img src={art.image} alt={art.title} />
               <p style={{ marginTop: "10px" }}>{art.title}</p>
               <Form>
                 <Form.Group

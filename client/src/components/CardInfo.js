@@ -1,5 +1,6 @@
+/* eslint-disable */
 import React, { useContext } from "react";
-import { Container, Card, Row, Col } from "react-bootstrap";
+import { Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { Button, Icon, Label } from "semantic-ui-react";
 import { UserContext } from "../contextComponents/auth";
@@ -12,27 +13,27 @@ function CardInfo({
   const postId = id;
   const { user } = useContext(UserContext);
 
-  const [deletePost, { error }] = useMutation(DELETE_POST_MUTATION, {
-    variables: { postId },
-    update(proxy, result) {
-      const data = proxy.readQuery({
-        query: RETRIEVE_POSTS_QUERY
-      });
-      proxy.writeQuery({
-        query: RETRIEVE_POSTS_QUERY,
-        data: {
-          getPosts: data.getPosts.filter(
-            post => post.id != result.data.deletePost
-          )
-        }
-      });
-    },
-    onError(err) {
-      return err;
-    }
-  });
+  // const [deletePost] = useMutation(DELETE_POST_MUTATION, {
+  //   variables: { postId },
+  //   update(proxy, result) {
+  //     const data = proxy.readQuery({
+  //       query: RETRIEVE_POSTS_QUERY
+  //     });
+  //     proxy.writeQuery({
+  //       query: RETRIEVE_POSTS_QUERY,
+  //       data: {
+  //         getPosts: data.getPosts.filter(
+  //           post => post.id !== result.data.deletePost
+  //         )
+  //       }
+  //     });
+  //   },
+  //   onError(error) {
+  //     return error;
+  //   }
+  // });
 
-  const [likePost, { erro }] = useMutation(LIKE_POST_MUTATION, {
+  const [likePost] = useMutation(LIKE_POST_MUTATION, {
     variables: { postId },
     update(proxy, result) {
       const data = proxy.readQuery({
@@ -45,8 +46,8 @@ function CardInfo({
         }
       });
     },
-    onError(err) {
-      return err;
+    onError(erro) {
+      return erro;
     }
   });
 
@@ -56,21 +57,13 @@ function CardInfo({
     }
     var liked = false;
     for (var i = 0; i < likes.length; i++) {
-      if (likes[i].username == user.username) {
+      if (likes[i].username === user.username) {
         liked = true;
         return liked;
       }
     }
     return liked;
   };
-
-  const deletePostFunc = () => {
-    deletePost();
-  };
-  const likePostFunc = () => {
-    likePost();
-  };
-
   function comment() {
     console.log("commented!");
   }
@@ -91,28 +84,24 @@ function CardInfo({
       )} */}
       <Card.Header variant="top">
         <div class="imageContainer">
-          <img src={gallery[0].image} />
+          <img src={gallery[0].image} alt={gallery[0].title} />
         </div>
         <div class="imageContainer">
-          <img src={gallery[1].image} />
+          <img src={gallery[1].image} alt={gallery[1].title} />
         </div>{" "}
         <div class="imageContainer">
-          <img src={gallery[2].image} />
+          <img src={gallery[2].image} alt={gallery[2].title} />
         </div>
         <div class="imageContainer">
-          <img src={gallery[3].image} />
+          <img src={gallery[3].image} alt={gallery[3].title} />
         </div>{" "}
       </Card.Header>
 
       <Card.Body>
-        <a as={Link} to={`/posts/${id}`}>
-          <Card.Title as={Link} to={`/posts/${id}`}>
-            {title}
-          </Card.Title>
-        </a>
-        <a as={Link} to={`/posts/${id}`}>
-          <Card.Text>By: {username}</Card.Text>
-        </a>
+        <Card.Title as={Link} to={`/posts/${id}`}>
+          {title}
+        </Card.Title>
+        <Card.Text>By: {username}</Card.Text>
         <div className="cardsHomeButtonsWrapper">
           <Button as="div" color="red" labelPosition="right" onClick={likePost}>
             <Button
@@ -157,12 +146,6 @@ function CardInfo({
     </Card>
   );
 }
-
-const DELETE_POST_MUTATION = gql`
-  mutation deletePost($postId: ID!) {
-    deletePost(postId: $postId)
-  }
-`;
 
 const LIKE_POST_MUTATION = gql`
   mutation likePost($postId: ID!) {

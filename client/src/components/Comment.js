@@ -24,7 +24,7 @@ function Comment({ item, postId, commentId }) {
           <small className="text-muted">{item.createdAt.split("T")[0]}</small>
         </Card.Footer>{" "}
       </Card.Body>
-      {user != null && user.username == item.username ? (
+      {user != null && user.username === item.username ? (
         <Button
           className="deleteComment"
           color="red"
