@@ -18,7 +18,6 @@ function App() {
         <Route exact path="/" component={Home}></Route>
         <Route exact path="/login" component={Login}></Route>
         <Route exact path="/about" component={About}></Route>
-
         <Route exact path="/register" component={Register}></Route>
         <Route exact path="/posts/:postId" component={SingleGallery}></Route>
       </Router>

@@ -9,6 +9,7 @@ import loadingImage from "../images/loading.gif";
 import { useQuery } from "@apollo/react-hooks";
 import { UserContext } from "../contextComponents/auth";
 import Comment from "../components/Comment";
+
 function SingleGallery(props) {
   const postId = props.match.params.postId;
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -29,6 +30,7 @@ function SingleGallery(props) {
   const [deletePost] = useMutation(DELETE_POST_MUTATION, {
     variables: { postId },
     update(proxy, result) {
+      window.location.replace("https://slw515-curate.netlify.app/");
       const data = proxy.readQuery({
         query: RETRIEVE_POSTS_QUERY
       });
@@ -40,7 +42,6 @@ function SingleGallery(props) {
           )
         }
       });
-      props.history.push("/");
     },
 
     onError(err) {
