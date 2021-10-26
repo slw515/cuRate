@@ -65,7 +65,7 @@ function CardInfo({
     return liked;
   };
   function comment() {
-    console.log("commented!");
+    // console.log("csommented!");
   }
   return (
     <Card className="cardInfoHome">

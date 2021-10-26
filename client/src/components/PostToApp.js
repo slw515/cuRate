@@ -59,13 +59,13 @@ function PostToApp(props) {
   }`;
 
   const handleFetch = () => {
-    console.log(URL);
+    // console.log(URL);
     setisLoaded(false);
     fetch(URL)
       .then(response => response.json())
 
       .then(body => {
-        console.log("first");
+        // console.log("first");
         setHits([...body.artObjects]);
         // console.log(hits);
         setPageCount(() => {
@@ -81,13 +81,13 @@ function PostToApp(props) {
       .then(() => {
         setisLoaded(true);
 
-        console.log("seconds");
+        // console.log("seconds");
         var checkboxes = document.getElementsByClassName("form-check-input");
         for (var i = 0; i < checkboxes.length; i++) {
           var isTrue = false;
           for (var x = 0; x < currentSelectedArt.length; x++) {
             if (currentSelectedArt[x].title === checkboxes[i].value) {
-              console.log(currentSelectedArt[x].title + " is true");
+              // console.log(currentSelectedArt[x].title + " is true");
               isTrue = true;
               break;
             }
@@ -134,7 +134,6 @@ function PostToApp(props) {
     setcurrentPage(selectedObject.selected);
   };
   const changeQueryParams = event => {
-    console.log(event.target);
     setQueryParams({ ...queryParams, [event.target.name]: event.target.value });
   };
   const [createPost] = useMutation(CREATE_POST_MUTATION, {
@@ -147,7 +146,7 @@ function PostToApp(props) {
       const data = proxy.readQuery({
         query: RETRIEVE_POSTS_QUERY
       });
-      console.log(result.data);
+      // console.log(result.data);
       proxy.writeQuery({
         query: RETRIEVE_POSTS_QUERY,
         data: {
@@ -181,7 +180,6 @@ function PostToApp(props) {
       const artworkObject = hits.find(
         artwork => artwork.title === event.target.value
       );
-      console.log(event.target.value);
       addRemoveSelectedArt([
         ...currentSelectedArt,
         {

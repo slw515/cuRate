@@ -56,7 +56,6 @@ function Home() {
                 <h1>Loading Posts...</h1>
               ) : data.getPosts && user != null ? (
                 data.getPosts.map(function(post, i) {
-                  console.log(post.username);
                   return post.username === user.username ? (
                     <div className="col-md-4" key={post.id}>
                       <CardInfo post={post}></CardInfo>

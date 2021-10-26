@@ -99,9 +99,6 @@ function SingleGallery(props) {
   const { data } = useQuery(RETRIEVE_POST_QUERY, {
     variables: {
       postId
-    },
-    onCompleted() {
-      console.log(data.getPost);
     }
   });
 

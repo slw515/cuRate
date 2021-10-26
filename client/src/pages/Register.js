@@ -20,7 +20,6 @@ function Register(props) {
       props.history.push("/");
     },
     onError(err) {
-      console.log(err.graphQLErrors[0].extensions.errors);
       setErrors(err.graphQLErrors[0].extensions.errors);
     },
     variables: values
